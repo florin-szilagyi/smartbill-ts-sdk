@@ -1,0 +1,38 @@
+{
+	"compilerOptions": {
+		/* Visit https://aka.ms/tsconfig.json to read more about this file */
+
+		/* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+		"target": "ES2020",
+		/* Specify what JSX code is generated. */
+		"jsx": "react-jsx",
+
+		/* Specify what module code is generated. */
+		"module": "ESNext",
+		"moduleResolution": "node",
+		/* Specify type package names to be included without being referenced in a source file. */
+		"types": [
+			"node"
+		],
+		/* Enable importing .json files */
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"checkJs": false,
+		"declaration": true,
+		"outDir": "./dist",
+		"rootDir": "./",
+		"isolatedModules": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true
+	},
+	"include": [
+		"src/**/*",
+	],
+  "exclude": [
+    "node_modules",
+    "tests"
+  ]
+}
