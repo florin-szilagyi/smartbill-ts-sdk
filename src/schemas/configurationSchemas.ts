@@ -4,5 +4,5 @@ export const VatTaxRatesParamsSchema = z.object({ cif: z.string() });
 
 export const SeriesParamsSchema = z.object({
   cif: z.string(),
-  type: z.string().optional(),
+  type: z.string().optional().nullable(),
 });

@@ -1,4 +1,4 @@
-export type UrlParams = Record<string, string | number | boolean | undefined>;
+export type UrlParams = Record<string, string | number | boolean | null | undefined>;
 
 export interface RequestMethods {
   get: <T>(path: string, query?: UrlParams) => Promise<T | Buffer>;
