@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CreateInvoiceParamsSchema, DefaultUrlSchema, DefaultSchema, SendEmailParamsSchema } from "../schemas/invoiceSchemas";
+import { CreateInvoiceParamsSchema, DefaultUrlSchema, DefaultSchema, SendEmailParamsSchema } from "../schemas";
 import { InvoiceResponse } from "../types/invoiceTypes";
 import { RequestMethods } from "../core/http";
 

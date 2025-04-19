@@ -25,5 +25,3 @@ export const CreateInvoiceParamsSchema = z.object({
   exchangeRate: z.number().optional(),
   useStock: z.boolean().optional(),
 });
-
-export * from "./shared";

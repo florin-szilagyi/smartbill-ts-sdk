@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { StocksParamsSchema } from "../schemas/stockSchemas";
+import { StocksParamsSchema } from "../schemas";
 import { RequestMethods } from "../core/http";
 
 export class StockHandler {

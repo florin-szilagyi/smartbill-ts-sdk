@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { PaymentSchema, DefaultUrlSchema } from "../schemas/paymentSchemas";
 import { RequestMethods } from "../core/http";
+import { DefaultUrlSchema, PaymentSchema, GetFiscalPrinterTextParamsSchema, DeleteOtherPaymentSchema } from "../schemas";
 
 export class PaymentHandler {
   private request: RequestMethods;
@@ -14,8 +14,8 @@ export class PaymentHandler {
     return this.request.post("/payment", validated);
   }
 
-  async deleteOther(data: z.infer<typeof DefaultUrlSchema>) {
-    const validated = DefaultUrlSchema.parse(data);
+  async deleteOther(data: z.infer<typeof DeleteOtherPaymentSchema>) {
+    const validated = DeleteOtherPaymentSchema.parse(data);
     return this.request.del("/payment/v2", validated);
   }
 
@@ -24,7 +24,7 @@ export class PaymentHandler {
     return this.request.del("/payment/chitanta", validated);
   }
 
-  async getFiscalPrinterText(params: { id: string }) {
+  async getFiscalPrinterText(params:z.infer<typeof GetFiscalPrinterTextParamsSchema>) {
     return this.request.get("/payment/text", params);
   }
 }

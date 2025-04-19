@@ -16,4 +16,19 @@ export const PaymentSchema = z.object({
   client: ClientSchema.optional(),
 });
 
-export { DefaultUrlSchema } from "./shared";
+export const GetFiscalPrinterTextParamsSchema = z.object({
+  id: z.string(),
+  cif: z.string(),
+});
+
+export const DeleteOtherPaymentSchema = z.object({
+  cif: z.string(),
+  seriesname: z.string(),
+  number: z.string(),
+  paymentType: z.enum(["Card", "CEC", "Bilet  ordin", "Ordin plata", "Mandat postal", "Alta incasare"]),
+  paymentValue: z.number().optional(),
+  clientName: z.string().optional(),
+  clientCif: z.string().optional(),
+  invoiceSeries: z.string(),
+  invoiceNumber: z.string(),
+});

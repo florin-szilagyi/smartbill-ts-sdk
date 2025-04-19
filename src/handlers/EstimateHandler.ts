@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CreateEstimateParamsSchema, DefaultUrlSchema, SendEmailParamsSchema } from "../schemas/estimateSchemas";
+import { CreateEstimateParamsSchema, DefaultUrlSchema, SendEmailParamsSchema } from "../schemas";
 import { EstimateResponse } from "../types/estimateTypes";
 import { RequestMethods } from "../core/http";
 

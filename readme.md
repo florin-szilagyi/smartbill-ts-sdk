@@ -1,7 +1,7 @@
 # SmartBill TypeScript SDK
 
 [SmartBill API Documentation](https://api.smartbill.ro/)
-
+GitHub: [https://github.com/florin-szilagyi/smartbill-ts-sdk](https://github.com/florin-szilagyi/smartbill-ts-sdk)
 ---
 
 ## English

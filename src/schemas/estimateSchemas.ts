@@ -24,6 +24,3 @@ export const EstimateRefSchema = z.object({
     seriesName: z.string(),
     number: z.string(),
   });
-
-export { ClientSchema, ProductSchema };
-export * from "./shared";

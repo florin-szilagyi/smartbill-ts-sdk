@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VatTaxRatesParamsSchema, SeriesParamsSchema } from "../schemas/configurationSchemas";
+import { VatTaxRatesParamsSchema, SeriesParamsSchema } from "../schemas";
 import { RequestMethods } from "../core/http";
 
 export class ConfigurationHandler {
