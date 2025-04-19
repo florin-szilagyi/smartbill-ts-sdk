@@ -1,6 +1,6 @@
 {
   "name": "smartbill-ts-sdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "florin-szilagyi",
   "description": "SmartBill TypeScript SDK",
   "main": "dist/index.js",
