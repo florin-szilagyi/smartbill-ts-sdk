@@ -1,0 +1,2775 @@
+{
+	"info": {
+		"_postman_id": "a6e517c7-9e90-4820-b64d-b00df25dfc31",
+		"version":"0.0.1",
+		"name": "The SmartBIll REST API",
+		"description": "## Autentificarea\n\nSmartBill REST API foloseste o procedura de autentificare preemptiva, pe baza unui model de autentificare acces de baza (**Basic Authentication**), folosind credentialele: utilizator si token:\n\n*   **Utilizatorul** este adresa de e-mail cu care se face autentificarea in contul SmartBill Facturare/Gestiune;\n*   **Tokenul** se gaseste in contul de SmartBill Facturare/Gestiune> sectiunea Contul Meu > Integrari, in partea de jos a paginii, in zona dedicata API.\n    \n\n* * *\n\n## Authentication\n\n  \nSmartBill REST API uses a preemptive authentication procedure, based on a basic access authentication model (**Basic Authentication**), using the credentials: user and token:\n\n*   **The username** is the e-mail address used to log in to SmartBill Facturare/Gestiune;\n*   **The token** can be found in Contul Meu > Integrari, in the dedicated API area.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔵 Romana",
+			"item": [
+				{
+					"name": "Facturi",
+					"item": [
+						{
+							"name": "Emitere factura firma neplatitoare de TVA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Pentru o firma neplatitoare de TVA nu este necesara transmiterea parametrilor care au legatura cu calculul TVA. TVA nu va fi calculat si nu va fi afisat pe factura."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura ciorna",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": true,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "La facturare exista posibilitatea emiterii unei facturi ***ciorna***.  \nIn acest caz, factura nu va fi efectiv emisa si nu va primi un numar pe serie.  \nAceasta factura poate fi ulterior vizualizata si salvata (emisa) din contul de Cloud din sectiunea ***Facturi*** a meniului ***Rapoarte***.\n\nPentru emiterea unei facturi ciorna, trebuie ca parametrul **isDraft** sa fie **true**."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura simpla - produse fara cod",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Acesta e un exemplu de emiterea a unei facturi cu minim de optiuni pentru o firma care nu utilizeaza coduri de produse."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura simpla - produse cu cod",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"code\": \"codProdus1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Acesta e un exemplu de emiterea a unei facturi cu minim de optiuni pentru o firma care utilizeaza coduri de produse.\n\nMai exact, apare parametrul **\"code\"** in cadrul produsului facturat."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura - produse cu descriere",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"productDescription\": \"conform contract nr. 10/2022 pentru luna mai\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Acesta e un exemplu de emiterea a unei facturi cu minim de optiuni pentru o firma care utilizeaza descrieri ale produsului.\n\nMai exact, apare parametrul **\"productDescription\"** in cadrul produsului facturat."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu servicii",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Abonament lunar\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": true\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Orice produs facturat poate fi de tipul produs sau serviciu.\n\nIn cazul in care se doreste facturarea de servicii, parametrul **\"isService**\" va avea valoarea **true**.\n\nIn acest caz, nu se mai foloseste modul de lucru cu descarcare de gestiune."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu returnarea linkului public al facturii",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Abonament lunar\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": true\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Orice produs facturat poate fi de tipul produs sau serviciu.\n\nIn cazul in care se doreste facturarea de servicii, parametrul **\"isService**\" va avea valoarea **true**.\n\nIn acest caz, nu se mai foloseste modul de lucru cu descarcare de gestiune."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu CIF intracomunitar",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"useIntraCif\": true,\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "In cazul in care se doreste emiterea facturii cu CIF intracomunitar, este necesara utilizarea parametrului boolean **\"useIntraCif\"**. Parametrul poate sa fie folosit si in cazul in care se doreste folosirea de CIF OSS.\n\nCand **\"useIntraCif = false\"**, factura se va emite cu CIF-ul standard al firmei.\n\nCand **\"useIntraCif = true\"**, factura se emite cu CIF-ul intracomunitar doar daca acesta este configurat pe firma. In cazul in care nu a fost setat un CIF intracomunitar, se va emite cu CIF-ul standard."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura pe baza de proforma",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"isDraft\": false,\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"useStock\": false,\r\n    \"useEstimateDetails\": true,\r\n    \"estimate\": {\r\n      \"seriesName\": \"{{estimateSeriesName}}\",\r\n      \"number\": \"0032\"\r\n    }\r\n  }\r\n \r\n \r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Acesta este un exemplu de emitere de factura cand facturarea se face pe baza unei proforme.\n\nFactura proforma pe baza careia se face emiterea trebuie sa fie deja emisa. Emiterea ei se poate face fie din contul SmartBill Cloud, fie prin API public, apeland metoda de emitere de proforma.\n\nParametrii care fac referire la factura proforma pe baza careia se face emiterea sunt:\n\n``` json\n\"useEstimateDetails\": true,\n    \"estimate\": {\n      \"seriesName\": \"ppub1\",\n      \"number\": \"0021\"\n    }\n\n```\n\nPentru ca o factura sa fie generata cu succes este necesar ca:\n\n*   parametrul **useEstimateDetails** sa fie **true** pentru a se prelua pe factura informatiile din proforma\n*   **specificarea seriei si a numarului facturii proforme** pe baza careia este emisa factura.  \n    In cazul in care parametrul **useStock** este **true**, se va face descarcarea din stoc a produselor facturate."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu link de plata",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"paymentUrl\": \"Generate URL\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Exista doua modalitati prin care poti adauga un link de plata pe document.\n\nO prima modalitate presupune generarea link-ului de plata la momentul emiterii facturii si va functiona doar in situatia in care ai configurat contul tau Netopia Payments sau cel de EuPlatesc in [Contul Meu > Integrari](https://cloud.smartbill.ro/core/integrari//).\n\nIn acest caz, la trimiterea parametrului de mai jos se va genera link-ul de plata in Netopia, respectiv EuPlatesc, si link-ul va fi asociat butonului \"PLATESTE CU CARDUL\" de pe factura:\n\n``` json\n  {\n  \"paymentUrl\": \"Generate URL\",\n  }\n\n```\n\nRaspuns:\n\n``` json\n {\n   \"errorText\": \"\",\n   \"message\": \"\",\n   \"number\": \"0177\",\n   \"series\": \"fac\",\n   \"url\": \"https://secure.mobilpay.ro/qp/BiSujm14-w3g2c-DzlVa0\"\n }\n\n```\n\nA doua modalitate prin care poti adauga link-ul de plata pe documente se aplica in situatia in care utilizezi un operator de plati diferit de cei integrati in SmartBill, spre exemplu Stripe. Astfel, va fi necesara generarea link-ului de plata in Stripe si apoi trimiterea acestuia pe parametrul paymentURL cu valoarea linkului respectiv.\n\n``` json\n  {\n  \"paymentUrl\": \"link_plata_din_stripe\",\n  }\n\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu discount valoric",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        },\r\n        {\r\n            \"name\": \"Discount valoric Produs 1\",\r\n            \"isDiscount\": true,\r\n            \"numberOfItems\": 1,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"discountType\": 1,\r\n            \"discountValue\": -5\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "La emiterea facturii este posibila aplicarea unui discount care poate fi valoric sau procentual. Discountul se va aplica pe un numar de produse introduse deja pe factura. Numarul de produse va fi stabilit prin parametrul **numberOfItems**, care face referire la produsele si discounturile imediat anterioare discountului.\n\nLa **discountul valoric** se stabileste direct valoarea discountului. In acest caz parametrul discountType ia valoarea 1, iar valoarea discountului se transmite ca valoare negativa prin parametrul discountValue.\n\n``` json\n{\n    \"isDiscount\": true,\n    \"numberOfItems\": 2,\n    \"discountType\": 1,\n    \"discountValue\": -5\n}\n\n```\n\nIn cazul aplicarii unui discount pe un produs se urmaresc pasii urmatori:\n\n*   Se adauga produsul/produsele pe document, parametrul isDiscount este false. Detalii in tabelul [Date produs](https://api.smartbill.ro/#DateProdus).\n*   **Atentie!** Parametrul numberOfItems stabileste numarul de produse pe care se aplica discountul si reprezinta numarul de produse (produs sau discount) care sunt imediat anterioare sectiunii curente.\n*   In cazul in care se doreste aplicarea a doua discounturi (spre ex, unul procentual si unul valoric) pe acelasi produs/produse, discounturile se adauga succesiv. Al doilea discount se va aplica atat pentru produs cat si pentru primul discount care a fost deja considerat.\n    \n\n**Observatii in cazul aplicarii unui discount pe mai multe produse!**\n\n1) In cazul aplicarii unui discount pe mai multe produse, cota TVA folosita pentru discount, va fi cota TVA folosita pentru produsele pe care acest discount se aplica. Valorile parametrilor taxName si/sau taxPercentage sunt ignorate.\n\n2) Discountul procentual poate fi aplicat pe mai multe produse doar daca acestea au aceeasi cota TVA. In cazul in care se aplica pe produse cu cote TVA diferite, va fi returnat un mesaj de eroare.\n\n3) Discountul valoric poate fi aplicat pe mai multe produse cu cote TVA diferite. In acest caz este obligatorie specificarea cotei TVA folosite la discount prin parametrii taxPercentage (obligatoriu) si taxName (optional)."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu discount procentual",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        },\r\n        {\r\n            \"name\": \"Discount valoric Produs 1\",\r\n            \"isDiscount\": true,\r\n            \"numberOfItems\": 1,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"discountType\": 2,\r\n            \"discountPercentage\": 10\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "La emiterea facturii este posibila aplicarea unui discount care poate fi valoric sau procentual. Discountul se va aplica pe un numar de produse introduse deja pe factura. Numarul de produse va fi stabilit prin parametrul numberOfItems, care face referire la produsele si discounturile imediat anterioare discountului.\n\nLa **discountul procentual** se stabileste procentul care se aplica pe suma de plata pentru a obtine valoarea discountului. In acest caz parametrul discountType ia valoarea 2, iar procentul discountului se transmite ca numar (fara procent) prin parametrul discountPercentage.\n\n``` json\n{\n    \"isDiscount\": true,\n    \"numberOfItems\": 2,\n    \"discountType\": 2,\n    \"discountPercentage\": 10\n}\n\n```\n\nIn cazul aplicarii unui discount pe un produs se urmaresc pasii urmatori:\n\n*   Se adauga produsul/produsele pe document, parametrul isDiscount este false. Detalii in tabelul [Date produs](https://api.smartbill.ro/#DateProdus).\n*   **Atentie!** Parametrul numberOfItems stabileste numarul de produse pe care se aplica discountul si reprezinta numarul de produse (produs sau discount) care sunt imediat anterioare sectiunii curente.\n*   In cazul in care se doreste aplicarea a doua discounturi (spre ex, unul procentual si unul valoric) pe acelasi produs/produse, discounturile se adauga succesiv. Al doilea discount se va aplica atat pentru produs cat si pentru primul discount care a fost deja considerat.\n    \n\n**Observatii in cazul aplicarii unui discount pe mai multe produse!**\n\n1) In cazul aplicarii unui discount pe mai multe produse, cota TVA folosita pentru discount, va fi cota TVA folosita pentru produsele pe care acest discount se aplica. Valorile parametrilor taxName si/sau taxPercentage sunt ignorate.\n\n2) Discountul procentual poate fi aplicat pe mai multe produse doar daca acestea au aceeasi cota TVA. In cazul in care se aplica pe produse cu cote TVA diferite, va fi returnat un mesaj de eroare.\n\n3) Discountul valoric poate fi aplicat pe mai multe produse cu cote TVA diferite. In acest caz este obligatorie specificarea cotei TVA folosite la discount prin parametrii taxPercentage (obligatoriu) si taxName (optional)."
+							},
+							"response": []
+						},
+						{
+							"name": "Emiterea unei facturi incasate",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ],\r\n    \"payment\": {\r\n        \"value\": 10,\r\n        \"paymentSeries\": \"{{paymentSeries}}\",\r\n        \"type\": \"Chitanta\",\r\n        \"isCash\": true\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Incasarea unei facturi se poate face partial sau integral la facturare, sau ulterior prin [emiterea unei incasari](https://api.smartbill.ro/#Incasari/addPaymentPublicApi).\n\nParametrul type defineste tipul de incasare care poate fi Chitanta, Bon, Card, CEC, Bilet ordin, Ordin plata, Mandat postal sau Alta incasare.\n\nIn cazul in care incasarea se face cu chitanta, o chitanta va fi automat emisa si salvata in sistem. Pentru aceasta, seria chitantei trebuie specificata (serie definita in prealabil in contul Cloud, [vezi serii documente](https://api.smartbill.ro/#SeriiDocumenteCloud)).\n\nIn cazul in care sunteti conectati la o casa de marcat, incasarea se poate face prin emiterea unui bon fiscal. Pentru aceasta, se alege tipul de incasare *type = Bon* iar apoi se apeleaza metoda de [emitere bon](https://api.smartbill.ro/#Incasari/addPaymentPublicApi/Emitere_de_bon_fiscal).\n\nIncasarea facturii la emitere se face prin introducerea sectiunii **payment** care contine parametrii referitori la incasare. Pentru detalii vezi [tabelul de parametrii pentru incasare](https://api.smartbill.ro/#DateIncasare).\n\n``` json\n \"payment\": {\n    \"value\": 10,\n    \"paymentSeries\": \"{{paymentSeries}}\",\n    \"type\": \"Chitanta\",\n    \"isCash\": true\n }\n\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura pe o firma cu TVA la incasare",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"usePaymentTax\": true,\r\n    \"paymentBase\": 20,\r\n    \"colectedTax\": 0.19,\r\n    \"paymentTotal\": 20,\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Servicii consultanta\",\r\n        \"code\": \"ccd1\",\r\n        \"productDescription\": \"conform contract nr. 10/2021 pentru luna mai\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 2,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": true\r\n      }\r\n    ],\r\n    \"payment\": {\r\n      \"value\": 100,\r\n      \"type\": \"Ordin plata\",\r\n      \"isCash\": false\r\n    }\r\n  }\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Stabilirea valorii TVA si afisarea ei pe factura depinde de statusul de platitor TVA al firmei. Statusul de platitor TVA se poate modifica din pagina de [Configurare > Date firma.](https://cloud.smartbill.ro/core/configurare/date-firma/)\n\nOptiunea de emitere a facturii cu TVA la incasare se va utiliza doar in cazul in care firma este configurata ca platitoare de TVA si cand s-a ales incasarea totala sau partiala la facturare.\n\nPentru corectitudinea datelor inregistrate pe factura, este necesara corelarea valorilor referitoare la incasarea din sectiunea TVA la incasare cu cele din sectiunea **payment**. Aplicatia nu face verificari in aceasta privinta.\n\nAcestia sunt parametrii necesari pentru definirea folosirii TVA la incasare sunt:\n\n| Parametru | Value |\n| --- | --- |\n| paymentBase | valoare baza incasata pe baza careia se calculeaza TVA |\n| colectedTax | valoare TVA incasat |\n| paymentTotal | total valoare incasata = valoare baza incasata + valoare TVA incasat |\n\nExemplu:\n\n``` json\n{\n    \"usePaymentTax\": true,\n    \"paymentBase\": 20,\n    \"colectedTax\": 0.19,\n    \"paymentTotal\": 20,\n}\n\n```\n\n#### Situatii\n\nCand **usePaymentTax** are valoarea **false** sau lipseste din request, indiferent daca restul parametrilor apar sau nu, pe factura nu va fi afisat nimic in legatura cu TVA la incasare.\n\nCand **usePaymentTax** are valoarea **true** si:\n\n*   *firma este neplatitoare de TVA*:\n    *   se va primi un raspuns de eroare cu mesajul: \"O firma neplatitoare de tva nu poate folosi tva la incasare!\"\n*   *paymentBase, colectedTax si paymentTotal au valoarea 0 sau lipsesc din request*:\n    *   pe factura va fi afisata mentiunea :***TVA la incasare*** fara detalii despre valoarea TVA-ului incasat deja sau ramas de incasat\n*   *paymentBase, colectedTax si paymentTotal vor primi valori corespunzatoare cu incasarea care a fost facuta la facturare*:\n    *   pe factura vor fi afisate valorile incasarii, a TVA-ului colectat, a sumei ramase de incasat si a TVA-ului ramas de incasat"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura si trimiterea ei pe email clientului ca atasament + link catre factura",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"sendEmail\": true,\r\n    \"email\": {\r\n        \"cc\": \"\",\r\n        \"bcc\": \"\"\r\n    },\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Trimiterea facturii pe email clientului se poate face in momentul facturarii sau dupa momentul facturarii.\n\nConfigurarea serverului propriu de email in contul SmartBill este necesara pentru trimiterea email-ului clientului si se poate face din [SmartBill Cloud > Configurare > Email](https://cloud.smartbill.ro/core/configurare_mailuri/).\n\nTrimiterea facturii in momentul emiterii ei se face prin setarea parametrului **sendEmail** ca **true**.\n\nSe poate adauga si sectiunea **email** care va contine parametri referitori la cine va primi factura.\n\n``` json\n \"sendEmail\": true,\n \"email\": {\n     \"to\": \"test@firma.ro\",\n     \"cc\": \"test1@firma.ro\",\n     \"bcc\": \"test2@firma.ro\"\n }\n\n```\n\nAtunci **cand parametrul \"to\" lipseste**, factura va fi trimisa adresei de email definita in parametrul **email** din sectiunea **client**.\n\nAtunci **cand parametrul \"to\" este completat**, email-ul din acest camp va primi factura si nu cel definit in parametrul **email** din sectiunea **client**."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura in valuta",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"currency\": \"EUR\",\r\n    \"exchangeRate\": 4.47,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"EUR\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "O factura poate fi emisa in RON (comportament default) sau in valuta.\n\nIn cazul emiterii in valuta se folosesc urmatorii parametri:\n\n``` json\n    \"currency\": \"EUR\",\n    \"exchangeRate\": 4.47,\n\n```\n\nParametrul **exchangeRate** stabileste rata de curs valutar si este folosit in conversia automata a facturii.  \nDaca acest parametru nu este specificat, se va prelua cursul valutar de pe BNR din ziua curenta.\n\nExista posibilitatea calcularii automate a unui curs valutar adaptat pentru toate facturile emise prin preluarea cursului din ziua curenta/precedenta si aplicarea unui adaos. Pentru configurarea acestui mod de lucru, [vezi detalii aici](https://api.smartbill.ro/#ConfigurareCursValutar)."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura pentru produse cu pretul de referinta in valuta",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"currency\": \"RON\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"productDescription\": \"produs cu pretul de referinta in EUR\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"EUR\",\r\n            \"exchangeRate\": 4.47,\r\n            \"quantity\": 2,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"isService\": false\r\n        },\r\n        {\r\n            \"name\": \"Produs 2\",\r\n            \"productDescription\": \"produs cu pretul de referinta in USD\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"USD\",\r\n            \"exchangeRate\": 4.15,\r\n            \"quantity\": 2,\r\n            \"price\": 15,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"isService\": false\r\n        },\r\n        {\r\n            \"name\": \"Produs 3\",\r\n            \"productDescription\": \"produs cu pretul de referinta in RON\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 5,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Aplicatia SmartBill permite stabilirea de preturi de referinta in valuta pentru produsele facturate, si facturarea lor in RON sau valuta.\n\nPentru a efectua corect aceasta operatie este necesara configurarea contului firmei prin activarea preferintei \"Am preturi cu moneda de referinta in valuta\" din [Preferinte generale](https://cloud.smartbill.ro/documente/preferinte-generale/). Pentru mai multe detalii [vezi aici](https://api.smartbill.ro/#ConfigurareFacturiValuta).\n\nLa facturare, produsele pot avea preturi in monede diferite (ex: 2 produse in EUR, 1 produs in RON si 1 produs in USD). In cazul in care cursul valutar nu este specifica pe produse,cursul valutar folosit va depindede optiunile alese in cadrul sectiunii \"Curs valutar preluat de pe internet\" in zona [Preferinte personale](https://cloud.smartbill.ro/core/configurare/preferinte-personale/).\n\n* * *\n\nParametrii specifici pentru acest mod de facturare sunt:\n\n*   **In sectiunea date de facturare**, parametrul **currency** care defineste moneda in care se emite factura\n*   In sectiunea **products**:\n    *   parametrul **currency** care defineste moneda in care este specificat pretul produsului\n    *   parametrul **price** care defineste pretul in moneda specificata\n    *   Daca se doreste folosirea unui curs valutar diferit de cel preluat de pe internet sau cel definit in contul Cloud, se foloseste parametrul **exchangeRate** care defineste cursul valutar folosit la conversia automata a facturii."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura cu descarcarea gestiunii",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"useStock\": true,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"warehouseName\": \"{{warehouseName}}\",\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "La emiterea unei facturi se poate alege descarcarea din gestiunea produselor facturate.\n\nDescarcarea stocului se va face la emiterea facturii iar incarcarea stocului se va face in cazul in care factura este stearsa sau anulata.\n\nPentru descarcarea stocului in momentul facturarii urmatoarele sunt necesare:\n\n*   sa aveti modulul de Gestiune activat;\n*   sa existe cel putin o gestiune creata in [Nomenclatoare > Gestiuni](https://cloud.smartbill.ro/nomenclator/gestiuni/) ;\n*   sa existe produse in stocul gestiunii;\n*   unitatea de masura folosita pe produs la facturare sa fie aceeasi cu cea cu care s-a facut incarcarea produsului in stoc in contul Cloud.\n    \n\nPentru a activa operarea stocului se foloseste parametrul useStock cu valoarea true.\n\n``` json\n    \"useStock\": true,\n\n```\n\nDaca se face emiterea unei facturi cu descarcare de gestiune, pe baza de proforma, parametrul useStock cu valoarea true este inclus in sectiunea **estimate**.\n\n``` json\n    \"estimate\": {\n        [...]\n        \"useStock\": true\n    }\n\n```\n\nIn cadrul sectiunii **products**, pentru fiecare produs facturat, este necesara specificarea numelui gestiunii din care se face vanzarea prin parametrul **warehouseName**.\n\n> **Atentie!** Parametrul warehouseName este case sensitive.\n\n``` json\n\"products\": [\n        {\n            [...]\n            \"warehouseName\": \"Gestiune1\",\n        }\n    ]\n\n```\n\nIn cazul in care se doreste facturarea unui produs care nu se afla pe stoc, se foloseste parametrul **useStock** cu valoarea **false**. In acest caz, pentru a avea actualizate informatiile de gestiune, este necesar sa se faca descarcarea manuala a facturii din raportul [*Documente fara descarcare gestiune*](https://cloud.smartbill.ro/gestiune/raport/raport_documente_nedescarcate/) , odata ce produsul va deveni disponibil in stoc."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura in limba straina",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"language\": \"EN\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"translatedName\": \"Product 1\",\r\n            \"translatedMeasuringUnit\": \"piece\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "O factura este emisa in mod implicit in limba romana (RO), dar emiterea se poate face si intr-o alta limba.\n\nEste permisa folosirea unei limbi de circulatie internationala, predefinita in SmartBill Cloud sau a unei limbi definite de administrator in contul Cloud.\n\nLimba in care se va emite factura poate fi aleasa prin parametrul **language** din sectiunea datelor de facturare.\n\nPentru a include pe document denumirea produsului si a unitatii de masura folosite in limba de emitere a facturii, traducerea se va face prin folosirea parametrilor: **translatedName** si **translatedMeasuringUnit** din sectiunea **products**.\n\n``` json\n\"language\": \"EN\",\n\"products\": [\n        {\n            [...]\n            \"translatedName\": \"Product 1\",\n            \"translatedMeasuringUnit\": \"piece\",\n        }\n    ]\n\n```\n\nDefinirea unei limbi noi se face din [Configurare > Limbi](https://cloud.smartbill.ro/core/configurare/limba/)."
+							},
+							"response": []
+						},
+						{
+							"name": "Vizualizare PDF Factura",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/invoice/pdf?cif={{vatCode}}&seriesname={{invoiceSeriesName}}&number=0025",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice",
+										"pdf"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0025"
+										}
+									]
+								},
+								"description": "Aceasta este metoda care trebuie apelata pentru descarcarea PDF-ului facturii.\n\nIn Postman, cand se apeleaza acest webservice, trebuie selectat **Send and Download.**"
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare status incasare factura",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/invoice/paymentstatus?cif={{vatCode}}&seriesname={{invoiceSeriesName}}&number=0025",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice",
+										"paymentstatus"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0025"
+										}
+									]
+								},
+								"description": "Aceasta metoda trebuie apelata cand e necesar sa se afle daca o factura a fost sau nu incasata.\n\nCa raspuns, se va primi:\n\n*   suma facturii\n*   suma incasarii\n*   suma ramasa de incasat."
+							},
+							"response": []
+						},
+						{
+							"name": "Stornare factura",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"companyVatCode\":\"{{vatCode}}\",\r\n        \"seriesName\":\"{{invoiceSeriesName}}\",\r\n        \"number\":\"0025\",\r\n        \"issueDate\": \"{{todayDate}}\"\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice/reverse",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice",
+										"reverse"
+									]
+								},
+								"description": "Emiterea unei facturi storno este posibila doar in baza unei facturi existente in SmartBill Cloud.\n\nStornarea facturii este posibila doar in situatia in care pe aceasta nu exista stornari."
+							},
+							"response": []
+						},
+						{
+							"name": "Anulare factura",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/invoice/cancel?cif={{vatCode}}&seriesname={{invoiceSeriesName}}&number=2205",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice",
+										"cancel"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "2205"
+										}
+									]
+								},
+								"description": "Aceasta metoda poate fi apelata pentru orice factura care a fost deja emisa si presupune anularea facturii fara stergerea ei din baza de date."
+							},
+							"response": []
+						},
+						{
+							"name": "Restaurare factura anulata",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/invoice/restore?cif={{vatCode}}&seriesname={{invoiceSeriesName}}&number=2205",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice",
+										"restore"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "2205"
+										}
+									]
+								},
+								"description": "Aceasta metoda trebuie apelata cand se doreste restaurarea unei facturi anulate."
+							},
+							"response": []
+						},
+						{
+							"name": "Stergere factura",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/invoice?cif={{vatCode}}&seriesname={{invoiceSeriesName}}&number=2206",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "2206"
+										}
+									]
+								},
+								"description": "Aceasta metoda trebuie apelata cand se doreste stergerea unei facturi.\n\n**Doar ultima factura din serie poate fi stearsa**. Pentru celelalte facturi se poate aplica procedura de anulare."
+							},
+							"response": []
+						}
+					],
+					"description": "Contine toate actiunile posibile prin API-ul SmartBill referitoare la facturi.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Proforme",
+					"item": [
+						{
+							"name": "Emitere proforma firma neplatitoare de TVA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Pentru o firma neplatitoare de TVA nu este necesara transmiterea parametrilor care au legatura cu calculul TVA. TVA nu va fi calculat si nu va fi afisat pe factura proforma."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma ciorna",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": true,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "La facturare exista posibilitatea emiterii unei proforme ***ciorna***.  \nIn acest caz, proforma nu va fi efectiv emisa si nu va primi un numar pe serie.  \nAceasta proforma poate fi ulterior vizualizata si salvata (emisa) din contul de Cloud din sectiunea ***Facturi*** a meniului ***Proforme***.\n\nPentru emiterea unei facturi ciorna, trebuie ca parametrul **isDraft** sa fie **true**."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma simpla - produse fara cod",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Acesta e un exemplu de emiterea a unei proforme cu minim de optiuni pentru o firma care nu utilizeaza coduri de produse."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma simpla - produse cu cod",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"code\": \"codProdus1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Acesta e un exemplu de emiterea a unei proforme cu minim de optiuni pentru o firma care utilizeaza coduri de produse.\n\nMai exact, apare parametrul **\"code\"** in cadrul produsului facturat."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma simpla - produse cu descriere",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"productDescription\": \"conform contract nr. 10/2022 pentru luna mai\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Acesta e un exemplu de emiterea a unei proforme cu minim de optiuni pentru o firma care utilizeaza descrieri ale produsului.\n\nMai exact, apare parametrul **\"productDescription\"** in cadrul produsului facturat."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma cu servicii",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Abonament lunar\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": true\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Orice produs facturat poate fi de tipul produs sau serviciu.\n\nIn cazul in care se doreste facturarea de servicii, parametrul **\"isService**\" va avea valoarea **true**."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma cu returnarea linkului public al facturii",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Abonament lunar\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": true\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate/v2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate",
+										"v2"
+									]
+								},
+								"description": "Metoda este folosita cand se doreste returnarea informatiilor suplimentare:\n\n| **Parametru** | **Semnificatie** |\n| --- | --- |\n| documentUrl | link-ul de editare al proformei |\n| documentId | id-ul intern al proformei |\n| documentViewUrl | link-ul public al proformei |"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma cu CIF intracomunitar",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"useIntraCif\": true,\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "In cazul in care se doreste emiterea proformei cu CIF intracomunitar, este necesara utilizarea parametrului boolean **\"useIntraCif\"**. Parametrul poate sa fie folosit si in cazul in care se doreste folosirea de CIF OSS.\n\nCand **\"useIntraCif = false\"**, proforma se va emite cu CIF-ul standard al firmei.\n\nCand **\"useIntraCif = true\"**, proforma se emite cu CIF-ul intracomunitar doar daca acesta este configurat pe firma. In cazul in care nu a fost setat un CIF intracomunitar, se va emite cu CIF-ul standard."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma cu link de plata",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"paymentUrl\": \"Generate URL\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Exista doua modalitati prin care poti adauga un link de plata pe document.\n\nO prima modalitate presupune generarea link-ului de plata la momentul emiterii proformei si va functiona doar in situatia in care ai configurat contul tau Netopia Payments sau cel de EuPlatesc in [Contul Meu > Integrari](https://cloud.smartbill.ro/core/integrari//).\n\nIn acest caz, la trimiterea parametrului de mai jos se va genera link-ul de plata in Netopia, respectiv EuPlatesc, si link-ul va fi asociat butonului \"PLATESTE CU CARDUL\" de pe factura:\n\n``` json\n  {\n  \"paymentUrl\": \"Generate URL\",\n  }\n\n```\n\nRaspuns:\n\n``` json\n {\n   \"errorText\": \"\",\n   \"message\": \"\",\n   \"number\": \"0177\",\n   \"series\": \"fac\",\n   \"url\": \"https://secure.mobilpay.ro/qp/BiSujm14-w3g2c-DzlVa0\"\n }\n\n```\n\n* * *\n\nA doua modalitate prin care poti adauga link-ul de plata pe documente se aplica in situatia in care utilizezi un operator de plati diferit de cei integrati in SmartBill, spre exemplu Stripe. Astfel, va fi necesara generarea link-ului de plata in Stripe si apoi trimiterea acestuia pe parametrul **paymentURL** cu valoarea linkului respectiv.\n\n``` json\n  {\n  \"paymentUrl\": \"link_plata_din_stripe\",\n  }\n\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma cu discount valoric",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        },\r\n        {\r\n            \"name\": \"Discount valoric Produs 1\",\r\n            \"isDiscount\": true,\r\n            \"numberOfItems\": 1,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"discountType\": 1,\r\n            \"discountValue\": -5\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "La emiterea proformei este posibila aplicarea unui discount care poate fi valoric sau procentual. Discountul se va aplica pe un numar de produse introduse deja pe factura. Numarul de produse va fi stabilit prin parametrul **numberOfItems**, care face referire la produsele si discounturile imediat anterioare discountului.\n\nLa **discountul valoric** se stabileste direct valoarea discountului. In acest caz parametrul discountType ia valoarea 1, iar valoarea discountului se transmite ca valoare negativa prin parametrul discountValue.\n\n``` json\n{\n    \"isDiscount\": true,\n    \"numberOfItems\": 2,\n    \"discountType\": 1,\n    \"discountValue\": -5\n}\n\n```\n\nIn cazul aplicarii unui discount pe un produs se urmaresc pasii urmatori:\n\n*   Se adauga produsul/produsele pe document, parametrul isDiscount este false. Detalii in tabelul [Date produs](https://api.smartbill.ro/#DateProdus).\n*   **Atentie!** Parametrul numberOfItems stabileste numarul de produse pe care se aplica discountul si reprezinta numarul de produse (produs sau discount) care sunt imediat anterioare sectiunii curente.\n*   In cazul in care se doreste aplicarea a doua discounturi (spre ex, unul procentual si unul valoric) pe acelasi produs/produse, discounturile se adauga succesiv. Al doilea discount se va aplica atat pentru produs cat si pentru primul discount care a fost deja considerat.\n    \n\n**Observatii in cazul aplicarii unui discount pe mai multe produse!**\n\n1) In cazul aplicarii unui discount pe mai multe produse, cota TVA folosita pentru discount, va fi cota TVA folosita pentru produsele pe care acest discount se aplica. Valorile parametrilor taxName si/sau taxPercentage sunt ignorate.\n\n2) Discountul procentual poate fi aplicat pe mai multe produse doar daca acestea au aceeasi cota TVA. In cazul in care se aplica pe produse cu cote TVA diferite, va fi returnat un mesaj de eroare.\n\n3) Discountul valoric poate fi aplicat pe mai multe produse cu cote TVA diferite. In acest caz este obligatorie specificarea cotei TVA folosite la discount prin parametrii taxPercentage (obligatoriu) si taxName (optional)."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma cu discount procentual",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        },\r\n        {\r\n            \"name\": \"Discount valoric Produs 1\",\r\n            \"isDiscount\": true,\r\n            \"numberOfItems\": 1,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"discountType\": 2,\r\n            \"discountPercentage\": 10\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "La emiterea proformei este posibila aplicarea unui discount care poate fi valoric sau procentual. Discountul se va aplica pe un numar de produse introduse deja pe factura. Numarul de produse va fi stabilit prin parametrul **numberOfItems**, care face referire la produsele si discounturile imediat anterioare discountului.\n\nLa **discountul procentual** se stabileste procentul care se aplica pe suma de plata pentru a obtine valoarea discountului. In acest caz parametrul discountType ia valoarea 2, iar procentul discountului se transmite ca numar (fara procent) prin parametrul discountPercentage.\n\n``` json\n{\n    \"isDiscount\": true,\n    \"numberOfItems\": 2,\n    \"discountType\": 2,\n    \"discountPercentage\": 10\n}\n\n```\n\nIn cazul aplicarii unui discount pe un produs se urmaresc pasii urmatori:\n\n*   Se adauga produsul/produsele pe document, parametrul isDiscount este false. Detalii in tabelul [Date produs](https://api.smartbill.ro/#DateProdus).\n*   **Atentie!** Parametrul numberOfItems stabileste numarul de produse pe care se aplica discountul si reprezinta numarul de produse (produs sau discount) care sunt imediat anterioare sectiunii curente.\n*   In cazul in care se doreste aplicarea a doua discounturi (spre ex, unul procentual si unul valoric) pe acelasi produs/produse, discounturile se adauga succesiv. Al doilea discount se va aplica atat pentru produs cat si pentru primul discount care a fost deja considerat.\n    \n\n**Observatii in cazul aplicarii unui discount pe mai multe produse!**\n\n1) In cazul aplicarii unui discount pe mai multe produse, cota TVA folosita pentru discount, va fi cota TVA folosita pentru produsele pe care acest discount se aplica. Valorile parametrilor taxName si/sau taxPercentage sunt ignorate.\n\n2) Discountul procentual poate fi aplicat pe mai multe produse doar daca acestea au aceeasi cota TVA. In cazul in care se aplica pe produse cu cote TVA diferite, va fi returnat un mesaj de eroare.\n\n3) Discountul valoric poate fi aplicat pe mai multe produse cu cote TVA diferite. In acest caz este obligatorie specificarea cotei TVA folosite la discount prin parametrii taxPercentage (obligatoriu) si taxName (optional)."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma si trimiterea ei pe email clientului ca atasament + link catre proforma",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"sendEmail\": true,\r\n    \"email\": {\r\n        \"cc\": \"\",\r\n        \"bcc\": \"\"\r\n    },\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Trimiterea proformei pe email clientului se poate face in momentul facturarii sau dupa momentul facturarii.\n\nConfigurarea serverului propriu de email in contul SmartBill este necesara pentru trimiterea email-ului clientului si se poate face din [SmartBill Cloud > Configurare > Email](https://cloud.smartbill.ro/core/configurare_mailuri/).\n\nTrimiterea facturii in momentul emiterii ei se face prin setarea parametrului **sendEmail** ca **true**.\n\nSe poate adauga si sectiunea **email** care va contine parametri referitori la cine va primi factura.\n\n``` json\n \"sendEmail\": true,\n \"email\": {\n     \"to\": \"test@firma.ro\",\n     \"cc\": \"test1@firma.ro\",\n     \"bcc\": \"test2@firma.ro\"\n }\n\n```\n\nAtunci **cand parametrul \"to\" lipseste**, proforma va fi trimisa adresei de email definita in parametrul **email** din sectiunea **client**.\n\nAtunci **cand parametrul \"to\" este completat**, email-ul din acest camp va primi proforma si nu cel definit in parametrul **email** din sectiunea **client**."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma in valuta",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"currency\": \"EUR\",\r\n    \"exchangeRate\": 4.47,\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"EUR\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "O proforma poate fi emisa in RON (comportament default) sau in valuta.\n\nIn cazul emiterii in valuta se folosesc urmatorii parametri:\n\n``` json\n    \"currency\": \"EUR\",\n    \"exchangeRate\": 4.47,\n\n```\n\nParametrul **exchangeRate** stabileste rata de curs valutar si este folosit in conversia automata a proformei.  \nDaca acest parametru nu este specificat, se va prelua cursul valutar de pe BNR din ziua curenta.\n\nExista posibilitatea calcularii automate a unui curs valutar adaptat pentru toate proformele emise prin preluarea cursului din ziua curenta/precedenta si aplicarea unui adaos. Pentru configurarea acestui mod de lucru, [vezi detalii aici](https://api.smartbill.ro/#ConfigurareCursValutar)."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma pentru produse cu pretul de referinta in valuta",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n      \"name\": \"{{clientName}}\",\r\n      \"vatCode\": \"{{clientVatCode}}\",\r\n      \"isTaxPayer\": true,\r\n      \"address\": \"{{clientAddress}}\",\r\n      \"city\": \"{{clientCity}}\",\r\n      \"county\": \"{{clientCounty}}\",\r\n      \"country\": \"{{clientCountry}}\",\r\n      \"email\": \"{{clientEmail}}\",\r\n      \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"code\": \"ccd1\",\r\n        \"productDescription\": \"produs cu pretul de referinta in EUR\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"EUR\",\r\n        \"exchangeRate\": 4.47,\r\n        \"quantity\": 2,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"isService\": false\r\n      },\r\n      {\r\n        \"name\": \"Produs 2\",\r\n        \"code\": \"ccd2\",\r\n        \"productDescription\": \"produs cu pretul de referinta in USD\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"USD\",\r\n        \"exchangeRate\": 4.15,\r\n        \"quantity\": 2,\r\n        \"price\": 15,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"isService\": false\r\n      },\r\n      {\r\n        \"name\": \"Produs 3\",\r\n        \"code\": \"ccd3\",\r\n        \"productDescription\": \"produs cu pretul de referinta in RON\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 5,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"isService\": false\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Aplicatia SmartBill permite stabilirea de preturi de referinta in valuta pentru produsele facturate, si facturarea lor in RON sau valuta.\n\nPentru a efectua corect aceasta operatie este necesara configurarea contului firmei prin activarea preferintei \"Am preturi cu moneda de referinta in valuta\" din [Preferinte generale](https://cloud.smartbill.ro/documente/preferinte-generale/). Pentru mai multe detalii [vezi aici](https://api.smartbill.ro/#ConfigurareFacturiValuta).\n\nLa facturare, produsele pot avea preturi in monede diferite (ex: 2 produse in EUR, 1 produs in RON si 1 produs in USD). In cazul in care cursul valutar nu este specifica pe produse, cursul valutar folosit va depindede optiunile alese in cadrul sectiunii \"Curs valutar preluat de pe internet\" in zona [Preferinte personale](https://cloud.smartbill.ro/core/configurare/preferinte-personale/).\n\n* * *\n\nParametrii specifici pentru acest mod de facturare sunt:\n\n*   **In sectiunea date de facturare**, parametrul **currency** care defineste moneda in care se emite factura\n*   In sectiunea **products**:\n    *   parametrul **currency** care defineste moneda in care este specificat pretul produsului\n    *   parametrul **price** care defineste pretul in moneda specificata\n    *   Daca se doreste folosirea unui curs valutar diferit de cel preluat de pe internet sau cel definit in contul Cloud, se foloseste parametrul **exchangeRate** care defineste cursul valutar folosit la conversia automata a facturii."
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere estimate in limba straina",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"language\": \"EN\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"translatedName\": \"Product 1\",\r\n            \"translatedMeasuringUnit\": \"piece\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "O proforma este emisa in mod implicit in limba romana (RO), dar emiterea se poate face si intr-o alta limba.\n\nEste permisa folosirea unei limbi de circulatie internationala, predefinita in SmartBill Cloud sau a unei limbi definite de administrator in contul Cloud.\n\nLimba in care se va emite proforma poate fi aleasa prin parametrul **language** din sectiunea datelor de facturare.\n\nPentru a include pe document denumirea produsului si a unitatii de masura folosite in limba de emitere a proformei, traducerea se va face prin folosirea parametrilor: **translatedName** si **translatedMeasuringUnit** din sectiunea **products**.\n\n``` json\n\"language\": \"EN\",\n\"products\": [\n        {\n            [...]\n            \"translatedName\": \"Product 1\",\n            \"translatedMeasuringUnit\": \"piece\",\n        }\n    ]\n\n```\n\nDefinirea unei limbi noi se face din [Configurare > Limbi](https://cloud.smartbill.ro/core/configurare/limba/)."
+							},
+							"response": []
+						},
+						{
+							"name": "Vizualizare PDF proforma",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/estimate/pdf?cif={{vatCode}}&seriesname={{estimateSeriesName}}&number=0023",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate",
+										"pdf"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{estimateSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0023"
+										}
+									]
+								},
+								"description": "Aceasta este metoda care trebuie apelata pentru descarcarea PDF-ului proformei.\n\nIn Postman, cand se apeleaza acest webservice, trebuie selectat **Send and Download.**"
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare status facturare proforma",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/estimate/invoices?cif={{vatCode}}&seriesname={{estimateSeriesName}}&number=0023",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate",
+										"invoices"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{estimateSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0023"
+										}
+									]
+								},
+								"description": "Aceasta metoda trebuie apelata cand e necesar sa se afle daca o proforma a fost sau nu facturata."
+							},
+							"response": []
+						},
+						{
+							"name": "Anulare proforma",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/estimate/cancel?cif={{vatCode}}&seriesname={{estimateSeriesName}}&number=0023",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate",
+										"cancel"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{estimateSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0023"
+										}
+									]
+								},
+								"description": "Aceasta metoda poate fi apelata pentru orice proforma care a fost deja emisa si presupune anularea facturii fara stergerea ei din baza de date."
+							},
+							"response": []
+						},
+						{
+							"name": "Restaurare proforma anulata",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/estimate/restore?cif={{vatCode}}&seriesname={{estimateSeriesName}}&number=0023",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate",
+										"restore"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{estimateSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0023"
+										}
+									]
+								},
+								"description": "Aceasta metoda trebuie apelata cand se doreste restaurarea unei proforme anulate."
+							},
+							"response": []
+						},
+						{
+							"name": "Stergere proforma",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/estimate?cif={{vatCode}}&seriesname={{estimateSeriesName}}&number=0023",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{estimateSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0023"
+										}
+									]
+								},
+								"description": "Aceasta metoda trebuie apelata cand se doreste stergerea unei proforme.\n\n**Doar ultima proforma din serie poate fi stearsa**. Pentru celelalte proforme se poate aplica procedura de anulare."
+							},
+							"response": []
+						}
+					],
+					"description": "Contine toate actiunile posibile prin API-ul SmartBill referitoare la proforme."
+				},
+				{
+					"name": "Incasari",
+					"item": [
+						{
+							"name": "Incasare cu chitanta pentru o factura deja emisa OOOOLLDDDDD",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"currency\": \"RON\",\r\n    \"language\": \"RO\",\r\n    \"seriesName\": \"{{paymentSeries}}\",\r\n    \"exchangeRate\": 1,\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"text\": \"reprezentand excursie in Grecia\",\r\n    \"translatedText\": \"\",\r\n    \"isDraft\": false,\r\n    \"type\": \"Chitanta\",\r\n    \"isCash\": true,\r\n    \"useInvoiceDetails\": false,\r\n    \"invoicesList\": [\r\n      {\r\n        \"seriesName\": \"{{invoiceSeriesName}}\",\r\n        \"number\": \"0029\"\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Aceasta metoda este folosita pentru emiterea incasarilor pentru facturile deja emise.\n\nLa emiterea incasarii cu chitanta va fi emisa automat si o chitanta.\n\nEste necesara specificarea seriei chitantei care va fi emisa, serie deja configurata in pagina de [Configurare serii documente](https://cloud.smartbill.ro/core/configurare/serii/)."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu chitanta pentru o factura deja emisa CORECT",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"currency\": \"RON\",\r\n    \"seriesName\": \"{{paymentSeries}}\",\r\n    \"precision\": 2,\r\n    \"value\": 10,\r\n    \"text\": \"excursie in Grecia\",\r\n    \"isDraft\": false,\r\n    \"type\": \"Chitanta\",\r\n    \"isCash\": true,\r\n    \"useInvoiceDetails\": false,\r\n    \"invoicesList\": [\r\n      {\r\n        \"seriesName\": \"{{invoiceSeriesName}}\",\r\n        \"number\": \"0089\"\r\n      }\r\n    ]\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Aceasta metoda este folosita pentru emiterea incasarilor pentru facturile deja emise.\n\nLa emiterea incasarii cu chitanta va fi emisa automat si o chitanta.\n\nEste necesara specificarea seriei chitantei care va fi emisa, serie deja configurata in pagina de [Configurare serii documente](https://cloud.smartbill.ro/core/configurare/serii/)."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu chitanta OOOOLLDDDDD",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"currency\": \"RON\",\r\n    \"language\": \"RO\",\r\n    \"seriesName\": \"{{paymentSeries}}\",\r\n    \"exchangeRate\": 1,\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"text\": \"reprezentand excursie in Grecia\",\r\n    \"translatedText\": \"representing the trip to Greece\",\r\n    \"isDraft\": false,\r\n    \"type\": \"Chitanta\",\r\n    \"isCash\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu chitanta Corect",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{paymentSeries}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"text\": \"excursie in Grecia\",\r\n    \"isDraft\": false,\r\n    \"type\": \"Chitanta\",\r\n    \"isCash\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "La emiterea incasarii cu chitanta va fi emisa automat si o chitanta.\n\nParametrii specifici pentru emiterea de chitanta.\n\n``` json\n{  \n    ...\n    \"seriesName\": \"{{paymentSeries}}\",\n    \"text\": \"excursie in Grecia\",\n    \"isDraft\": false,\n    \"type\": \"Chitanta\",\n    \"isCash\": true\n}\n\n```\n\nParametrul **type** este obligatoriu si va avea valoarea **Chitanta**.\n\nParametrul **isCash** este folosit cu valoarea **true** in cazul acestei metode, indiferent de valoarea trimisa de utilizator in request.\n\nIn cazul in care se doreste, seria chitantei poate fi specifcata folosind parametrul **seriesName**. In cazul in care seria nu este specificata in apel, se va folosi seria implicita definita in pagina de [Configurare serii documente](https://cloud.smartbill.ro/core/configurare/serii/).\n\nIn cazul in care se emite o chitanta ciorna (**isDraft** este true), acesta nu va primi un numar decat in momentul in care va fi finalizata.  \nFinalizarea ei poate fi facuta din contul Cloud, din pagina de [Incasari](https://cloud.smartbill.ro/raport/incasari/).  \nIn cazul in care se emite o chitanta finalizata, metoda va returna seria si numarul chitantei."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu card",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"isDraft\": false,\r\n    \"type\": \"Card\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Parametrul **type** este obligatoriu si va avea valoarea **Card**."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu cec",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"isDraft\": false,\r\n    \"type\": \"Cec\",\r\n    \"isCash\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Parametrul **type** este obligatoriu si va avea valoarea **Cec**."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu bilet la ordin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"isDraft\": false,\r\n    \"type\": \"Bilet ordin\",\r\n    \"isCash\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Parametrul **type** este obligatoriu si va avea valoarea **Bilet ordin**."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu ordin de plata",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"isDraft\": false,\r\n    \"type\": \"Ordin plata\",\r\n    \"isCash\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Parametrul **type** este obligatoriu si va avea valoarea **Ordin plata**."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu mandat postal",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"isDraft\": false,\r\n    \"type\": \"Mandat postal\",\r\n    \"isCash\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Parametrul **type** este obligatoriu si va avea valoarea **Mandat postal**."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu alta incasare",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"precision\": 2,\r\n    \"value\": 14,\r\n    \"isDraft\": false,\r\n    \"type\": \"Alta incasare\",\r\n    \"isCash\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Parametrul **type** este obligatoriu si va avea valoarea **Alta incasare**."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu datele de pe factura",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"type\": \"Ordin plata\",\r\n    \"isCash\": false,\r\n    \"useInvoiceDetails\": true,\r\n    \"invoicesList\": {\r\n        \"seriesName\": \"{{invoiceSeriesName}}\",\r\n        \"number\": \"0015\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "In acest caz, o parte din parametrii necesari emiterii incasarii se preiau de pe factura incasata.\n\nVor fi preluate de pe factura:\n\n*   Datele clientului;\n*   Moneda in care a fost emisa factura - moneda incasarii va fi aceeasi cu moneda facturii\n*   Cursul valutar folosit;\n*   Limba in care a fost emisa factura -\n*   Valoarea incasarii este totalul facturat.\n    \n\nIn cazul in care acesti parametri sunt transmisi in apelul metodei, acestia nu vor fi luati in considerare.\n\nNu este posibila incasarea partiala a unei facturi.\n\nParametrii specifici pentru acest mod de emitere a incasarii sunt:\n\n``` json\n{\n    \"useInvoiceDetails\": true,\n    \"invoicesList\": {\n        \"seriesName\": \"{{invoiceSeriesName}}\",\n        \"number\": \"0015\"\n    }\n}\n\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu bon fiscal cu returnarea continutului",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"value\": 10,\r\n    \"type\": \"Bon\",\r\n    \"returnFiscalPrinterText\": true,\r\n    \"observation\": \"obs\",\r\n    \"useStock\": false,\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ],\r\n    \"receivedCash\": 5,\r\n    \"receivedCard\": 5,\r\n    \"receivedTicheteMasa\": 0,\r\n    \"receivedTicheteCadou\": 0,\r\n    \"receivedOrdinDePlata\": 0,\r\n    \"receivedCec\": 0,\r\n    \"receivedCredit\": 0,\r\n    \"receivedCupon\": 0,\r\n    \"receivedPuncteDeFidelitate\": 0,\r\n    \"receivedBonuriValoareFixa\": 0,\r\n    \"receivedMonedaAlternativa\": 0\r\n  }\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Pentru emiterea unui bon fiscal este necesara configurarea casei de marcat din pagina [Case de marcat](https://beta2.smartbill.ro/core/configurare/case_de_marcat/).\n\nMetoda returneaza:\n\n*   **id**: numar de identificare unic pentru fiecare bon emis;\n*   **message**: continutul bonului codat. Acest continut trebuie inserat intr-un fisier cu numele si extensia configurate pentru casa de marcat si salvat;\n*   **number**: numarul bonului fiscal.\n    \n\nIn cazul in care se doreste emiterea bonului fiscal in SmartBill si tiparirea lui directa pe casa de marcat Daisy, Tremol, Partner sau Eltrade:\n\n*   Parametrul **returnFiscalPrinterText** trebuie setat pe **true**;\n*   Continutul parametrului **message** trebuie decodat din base64. Numele si extensia fisierului in care continutul decodat trebuie plasat se gaseste mai jos, impreuna cu locatia in care trebuie plasat fisierul pentru a putea fi preluat de driver-ul casei de marcat si tiparit pe casa:\n    *   casa Daisy (cu driverul Fisco): bon.txt va fi plasat in folderul din driver C:\\\\Fisco_Daisy\\\\Bonuri\\\\\n    *   casa Tremol (cu driver Server Tremol): bon.txt va fi plasat in C:\\\\ServerTremol\\\\Bonuri\\\\\n    *   casa Partner (cu driverul Fiscal Net): bon.txt va fi plasat in C:\\\\FiscalNet\\\\Bonuri\\\\\n    *   casa Eltrade (cu driverul Fiscal Printer): bon.bon va fi plasat in C:\\\\Program Files (x86)\\\\Eltrade\\\\DriverFPFile_RO\\\\Reciepts\\\\"
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu bon fiscal fara returnarea continutului",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"value\": 10,\r\n    \"type\": \"Bon\",\r\n    \"returnFiscalPrinterText\": false,\r\n    \"observation\": \"obs\",\r\n    \"useStock\": false,\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 10,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      }\r\n    ],\r\n    \"receivedCash\": 5,\r\n    \"receivedCard\": 5,\r\n    \"receivedTicheteMasa\": 0,\r\n    \"receivedTicheteCadou\": 0,\r\n    \"receivedOrdinDePlata\": 0,\r\n    \"receivedCec\": 0,\r\n    \"receivedCredit\": 0,\r\n    \"receivedCupon\": 0,\r\n    \"receivedPuncteDeFidelitate\": 0,\r\n    \"receivedBonuriValoareFixa\": 0,\r\n    \"receivedMonedaAlternativa\": 0\r\n  }\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Pentru emiterea unui bon fiscal este necesara configurarea casei de marcat din pagina [Case de marcat](https://beta2.smartbill.ro/core/configurare/case_de_marcat/).\n\nIn acest caz, bonul va fi emis in SmartBill Cloud si el va fi tiparit manual pe casa de marcat. Astfel, **returnFiscalPrinterText** trebuie setat pe **false**.\n\nMetoda returneaza:\n\n*   **id**: numar de identificare unic pentru fiecare bon emis;\n*   **number**: numarul bonului fiscal."
+							},
+							"response": []
+						},
+						{
+							"name": "Incasare cu bon fiscal cu discount",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"value\": 9,\r\n    \"type\": \"Bon\",\r\n    \"returnFiscalPrinterText\": false,\r\n    \"observation\": \"obs\",\r\n    \"useStock\": false,\r\n    \"products\": [\r\n      {\r\n        \"name\": \"Produs 1\",\r\n        \"isDiscount\": false,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"quantity\": 1,\r\n        \"price\": 355,\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"saveToDb\": false,\r\n        \"isService\": false\r\n      },\r\n      {\r\n        \"name\": \"Discount procentual 10%\",\r\n        \"isDiscount\": true,\r\n        \"numberOfItems\": 1,\r\n        \"measuringUnitName\": \"buc\",\r\n        \"currency\": \"RON\",\r\n        \"isTaxIncluded\": true,\r\n        \"taxName\": \"Normala\",\r\n        \"taxPercentage\": 19,\r\n        \"discountPercentage\": 10\r\n      }\r\n    ],\r\n    \"receivedCash\": 5,\r\n    \"receivedCard\": 4,\r\n    \"receivedTicheteMasa\": 0,\r\n    \"receivedTicheteCadou\": 0,\r\n    \"receivedOrdinDePlata\": 0,\r\n    \"receivedCec\": 0,\r\n    \"receivedCredit\": 0,\r\n    \"receivedCupon\": 0,\r\n    \"receivedPuncteDeFidelitate\": 0,\r\n    \"receivedBonuriValoareFixa\": 0,\r\n    \"receivedMonedaAlternativa\": 0\r\n  }\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/payment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment"
+									]
+								},
+								"description": "Pe un bon fiscal se pot acorda discounturi.\n\nDiscountul poate fi procentual sau valoric:\n\n*   Cand e setat paramentrul **discountPercentage** discountul va fi procentual.\n*   Cand e setat paramentrul **discountValue** discountul va fi valori.\n    \n\nAcordarea unui discount valoric pe firmele platitoare de TVA:\n\n*   Pe bonuri fiscale se afiseaza valoarea cu TVA a discountului, deci parametrul isTaxIncluded trebuie sa fie true.\n*   Valoare cu TVA a discountului va fi setata pe discountValue/discountPercentage."
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare status incasare factura",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/invoice/paymentstatus?cif={{vatCode}}&seriesname={{invoiceSeriesName}}&number=0025",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice",
+										"paymentstatus"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "number",
+											"value": "0025"
+										}
+									]
+								},
+								"description": "Aceasta metoda se foloseste cand e necesar sa se afle daca o factura a fost sau nu incasata."
+							},
+							"response": []
+						},
+						{
+							"name": "Returnare continut bon fiscal",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/payment/text?cif={{vatCode}}&id=1384",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment",
+										"text"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "id",
+											"value": "1384"
+										}
+									]
+								},
+								"description": "Metoda permite obtinerea continutului unui bon fiscal emis, cu conditia ca ID-ul acestuia sa fie cunoscut - id-ul este returnat la emiterea bonului fiscal.\n\nRaspunsul la apelarea metodei va contine textul bonului encodat base64. Pentru imprimare, continutul trebuie trimis la casa de marcat."
+							},
+							"response": []
+						},
+						{
+							"name": "Stergere chitanta",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/payment/chitanta?cif={{vatCode}}&seriesname={{paymentSeries}}&number=0009",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment",
+										"chitanta"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "seriesname",
+											"value": "{{paymentSeries}}"
+										},
+										{
+											"key": "number",
+											"value": "0009"
+										}
+									]
+								},
+								"description": "Metoda permite stergerea unei incasari tip chitanta, cu precizarea ca doar ultima chitanta din serie poate fi stearsa."
+							},
+							"response": []
+						},
+						{
+							"name": "Stergerea altor incasari pe baza facturii incasate",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/payment/v2?cif={{vatCode}}&paymentType=Ordin plata&invoiceSeries={{invoiceSeriesName}}&invoiceNumber=0046",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment",
+										"v2"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "paymentType",
+											"value": "Ordin plata"
+										},
+										{
+											"key": "invoiceSeries",
+											"value": "{{invoiceSeriesName}}"
+										},
+										{
+											"key": "invoiceNumber",
+											"value": "0046"
+										}
+									]
+								},
+								"description": "Stergerea unei incasari pe baza facturii incasate este posibila atunci cand:\n\n*   incasarea nu este facuta prin chitanta sau bon fiscal\n*   factura in baza careia se sterge incasarea nu este stearsa sau anulata\n    \n\nParametrul ***paymentType*** este obligatoriu si poate lua valorile: Card, CEC, Bilet ordin, Ordin plata, Mandat postal, Alta incasare."
+							},
+							"response": []
+						},
+						{
+							"name": "Stergerea altor incasari pe baza datelor incasarii",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/payment/v2?cif={{vatCode}}&paymentType=Ordin plata&paymentDate={{todayDate}}&paymentValue=14&clientName={{clientName}}&clientCif={{clientVatCode}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"payment",
+										"v2"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "paymentType",
+											"value": "Ordin plata"
+										},
+										{
+											"key": "paymentDate",
+											"value": "{{todayDate}}"
+										},
+										{
+											"key": "paymentValue",
+											"value": "14"
+										},
+										{
+											"key": "clientName",
+											"value": "{{clientName}}"
+										},
+										{
+											"key": "clientCif",
+											"value": "{{clientVatCode}}"
+										}
+									]
+								},
+								"description": "Stergerea unei incasari pe baza datelor acesteia se poate face atunci cand incasarea nu este facuta prin chitanta sau bon fiscal.\n\nIdentificarea incasarii se face pe baza parametrilor paymentType, paymentDate,paymentValue, clientName sau clientCif (in functie de client persoana fizica sau firma).\n\nSe va face stergerea primei incasari gasite in baza de date pentru clientul **clientName sau clientCif** din ziua **paymentDate**, care este de tipul **paymentType** si are valoarea **paymentValue**."
+							},
+							"response": []
+						}
+					],
+					"description": "Contine toate actiunile posibile prin API-ul SmartBill referitoare la incasari.\n\nO factura poate fi incasata la emitere total sau partial (in cazul in care se plateste un avans).\n\nParametrul **type** defineste tipul de incasare utilizat :\n\n*   incasare cu \"Chitanta\" - caz in care va fi emisa si o chitanta; este necesara specificarea seriei chitantei care va fi emisa, serie deja configurata in pagina de [Configurare serii documente](https://cloud.smartbill.ro/core/configurare/serii/)\n*   incasare prin \"Card\", \"CEC\", \"Bilet ordin\", \"Ordin plata\" sau \"Mandat postal\";\n*   \"Alta incasare\" - cand metoda de incasare este nespecificata sau nu corespunde cu niciuna din metodele specificate mai sus\n*   Incasarea cu bon fiscal este facuta folosind metoda pentru [Emitere bon fiscal](https://api.smartbill.ro/#Incasari/addPaymentPublicApi/Emitere_de_bon_fiscal)"
+				},
+				{
+					"name": "Email",
+					"item": [
+						{
+							"name": "Trimitere factura pe email ca atasament",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"number\": \"0040\",\r\n    \"type\": \"factura\",\r\n    \"subject\": \"I3RpcCBkb2N1bWVudCMgI3NlcmllIG51bWFyIGRvY3VtZW50IyA=\",\r\n    \"to\": \"{{clientEmail}}\",\r\n    \"bodyText\": \"QnVuYSB6aXVhLCA8L2JyPjwvYnI+QXRhc2F0IHZhIHRyYW5zbWl0ZW0gPGI+PGk+I3RpcCBkb2N1bWVudCMgI3NlcmllIG51bWFyIGRvY3VtZW50IzwvaT48L2I+IGVtaXNhIGluIGRhdGEgZGUgPGk+I2RhdGEgZW1pdGVyaWkjPC9pPiwgaW4gdmFsb2FyZSBkZSA8aT4jdG90YWwgZG9jdW1lbnQjPC9pPi4gPC9icj48L2JyPiBNdWx0dW1pbSBwZW50cnUgY29sYWJvcmFyZSE=\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/document/send",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"document",
+										"send"
+									]
+								},
+								"description": "Metoda este folosita pentru a trimite prin e-mail, ca atasament, o factura clientului.\n\nPentru ca expedierea de e-mail-uri sa fie facuta cu succes, este necesara [configurarea propriului server de email](https://ajutor.smartbill.ro/article/37-email) in contul Cloud de pe care se va face trimiterea.\n\nParametrul **bodyText** va contine textul emailului codificat folosind varianta [Base64](https://www.ietf.org/rfc/rfc2045.txt) .\n\nIn textul mesajului SmartBill poate prelua si afisa automat informatii referitoare la document. Aceste informatii pot fi:\n\n*   **#tip document# :** in functie de parametrul din apelarea metodei, afiseaza in email tipul documentului, mai exact \"factura\" sau \"proforma\";\n*   **#serie numar document# :** afiseaza in email seria si numarul documentului;\n*   **#link document# :** afiseaza in email URL-ul catre document;\n*   **#data emiterii# :** afiseaza in email data emiterii documentului;\n*   **#data scadentei# :** afiseaza in email data scadentei documentului\n*   **#total document# :** afiseaza in email valoarea totala a documentului, in moneda in care a fost acesta emis\n*   **#mentiune#**: afiseaza in email mentiunea de pe document\n*   **#nume client# :** afiseaza in email numele clientului pentru care a fost emis documentul expediat;\n*   **#persoana contact# :** afiseaza in email automat numele persoanei de contact daca ati introdus acest nume pe documentul expediat.\n    \n\n##### Un format tipic de e-mail care poate fi folosit poate fi vazut mai jos:\n\n> Buna ziua,\n> \n> Atasat va transmitem ***#tip document# #serie numar document#*** emisa in data de *#data emiterii#*, in valoare de *#total document#*.\n> \n> Multumim pentru colaborare!\n\nAcest mesaj codificat Base64 va avea forma de mai jos:\n\n```\nQnVuYSB6aXVhLCA8L2JyPjwvYnI+QXRhc2F0IHZhIHRyYW5zbWl0ZW0gPGI+PGk+I3RpcCBkb2N1bWVudCMgI3NlcmllIG51bWFyIGRvY3VtZW50IzwvaT48L2I+IGVtaXNhIGluIGRhdGEgZGUgPGk+I2RhdGEgZW1pdGVyaWkjPC9pPiwgaW4gdmFsb2FyZSBkZSA8aT4jdG90YWwgZG9jdW1lbnQjIFJPTjwvaT4uIDwvYnI+PC9icj4gTXVsdHVtaW0gcGVudHJ1IGNvbGFib3JhcmUh\n\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "Trimitere proforma pe email ca atasament",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"number\": \"0003\",\r\n    \"type\": \"proforma\",\r\n    \"subject\": \"I3RpcCBkb2N1bWVudCMgI3NlcmllIG51bWFyIGRvY3VtZW50IyA=\",\r\n    \"to\": \"{{clientEmail}}\",\r\n    \"bodyText\": \"QnVuYSB6aXVhLCA8L2JyPjwvYnI+QXRhc2F0IHZhIHRyYW5zbWl0ZW0gPGI+PGk+I3RpcCBkb2N1bWVudCMgI3NlcmllIG51bWFyIGRvY3VtZW50IzwvaT48L2I+IGVtaXNhIGluIGRhdGEgZGUgPGk+I2RhdGEgZW1pdGVyaWkjPC9pPiwgaW4gdmFsb2FyZSBkZSA8aT4jdG90YWwgZG9jdW1lbnQjPC9pPi4gPC9icj48L2JyPiBNdWx0dW1pbSBwZW50cnUgY29sYWJvcmFyZSE=\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/document/send",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"document",
+										"send"
+									]
+								},
+								"description": "Metoda este folosita pentru a trimite prin e-mail, ca atasament, o proforma clientului.\n\nPentru ca expedierea de e-mail-uri sa fie facuta cu succes, este necesara [configurarea propriului server de email](https://ajutor.smartbill.ro/article/37-email) in contul Cloud de pe care se va face trimiterea.\n\nParametrul **bodyText** va contine textul emailului codificat folosind varianta [Base64](https://www.ietf.org/rfc/rfc2045.txt) .\n\nIn textul mesajului SmartBill poate prelua si afisa automat informatii referitoare la document. Aceste informatii pot fi:\n\n*   **#tip document# :** in functie de parametrul din apelarea metodei, afiseaza in email tipul documentului, mai exact factura sau proforma;\n*   **#serie numar document# :** afiseaza in email seria si numarul documentului;\n*   **#link document# :** afiseaza in email URL-ul catre document;\n*   **#data emiterii# :** afiseaza in email data emiterii documentului;\n*   **#data scadentei# :** afiseaza in email data scadentei documentului\n*   **#total document# :** afiseaza in email valoarea totala a documentului, in moneda in care a fost acesta emis\n*   **#mentiune#**: afiseaza in email mentiunea de pe document\n*   **#nume client# :** afiseaza in email numele clientului pentru care a fost emis documentul expediat;\n*   **#persoana contact# :** afiseaza in email numele persoanei de contact daca ati introdus acest nume pe documentul expediat.\n    \n\n##### Un format tipic de e-mail care poate fi folosit poate fi vazut mai jos:\n\n> Buna ziua,\n> \n> Atasat va transmitem ***#tip document# #serie numar document#*** emisa in data de ***#data emiterii#***, in valoare de ***#total document#***.\n> \n> Multumim pentru colaborare!\n\nAcest mesaj codificat Base64 va avea forma de mai jos:\n\n```\nQnVuYSB6aXVhLCA8L2JyPjwvYnI+QXRhc2F0IHZhIHRyYW5zbWl0ZW0gPGI+PGk+I3RpcCBkb2N1bWVudCMgI3NlcmllIG51bWFyIGRvY3VtZW50IzwvaT48L2I+IGVtaXNhIGluIGRhdGEgZGUgPGk+I2RhdGEgZW1pdGVyaWkjPC9pPiwgaW4gdmFsb2FyZSBkZSA8aT4jdG90YWwgZG9jdW1lbnQjIFJPTjwvaT4uIDwvYnI+PC9icj4gTXVsdHVtaW0gcGVudHJ1IGNvbGFib3JhcmUh\n\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere factura si trimiterea ei pe email clientului ca atasament + link catre factura",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{invoiceSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"deliveryDate\": \"{{todayDate}}\",\r\n    \"sendEmail\": true,\r\n    \"email\": {\r\n        \"cc\": \"\",\r\n        \"bcc\": \"\"\r\n    },\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/invoice",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"invoice"
+									]
+								},
+								"description": "Metoda este folosita cand se doreste returnarea informatiilor suplimentare:\n\n| **Parametru** | **Semnificatie** |\n| --- | --- |\n| documentUrl | link-ul de editare al facturii |\n| documentId | id-ul intern al facturii |\n| documentViewUrl | link-ul public al facturii |"
+							},
+							"response": []
+						},
+						{
+							"name": "Emitere proforma si trimiterea ei pe email clientului ca atasament + link catre proforma",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"companyVatCode\": \"{{vatCode}}\",\r\n    \"client\": {\r\n        \"name\": \"{{clientName}}\",\r\n        \"vatCode\": \"{{clientVatCode}}\",\r\n        \"isTaxPayer\": true,\r\n        \"address\": \"{{clientAddress}}\",\r\n        \"city\": \"{{clientCity}}\",\r\n        \"county\": \"{{clientCounty}}\",\r\n        \"country\": \"{{clientCountry}}\",\r\n        \"email\": \"{{clientEmail}}\",\r\n        \"saveToDb\": false\r\n    },\r\n    \"issueDate\": \"{{todayDate}}\",\r\n    \"seriesName\": \"{{estimateSeriesName}}\",\r\n    \"isDraft\": false,\r\n    \"dueDate\": \"{{todayDate}}\",\r\n    \"sendEmail\": true,\r\n    \"email\": {\r\n        \"cc\": \"\",\r\n        \"bcc\": \"\"\r\n    },\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Produs 1\",\r\n            \"isDiscount\": false,\r\n            \"measuringUnitName\": \"buc\",\r\n            \"currency\": \"RON\",\r\n            \"quantity\": 1,\r\n            \"price\": 10,\r\n            \"isTaxIncluded\": true,\r\n            \"taxName\": \"Normala\",\r\n            \"taxPercentage\": 19,\r\n            \"saveToDb\": false,\r\n            \"isService\": false\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/estimate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"estimate"
+									]
+								},
+								"description": "Metoda este folosita ca dupa emiterea proformei, proformei sa se trimita pe email clientului, ca atasament. Totodata, in email va aparea si link-ul catre proforma.\n\nPentru ca expedierea de e-mail-uri sa fie facuta cu succes, este necesara [configurarea propriului server de email](https://ajutor.smartbill.ro/article/37-email) in contul Cloud de pe care se va face trimiterea.\n\nTrimiterea proformei la facturare se face prin setarea parametrului **sendEmail** ca \"true\".\n\nSe poate adauga si sectiunea **email** care contine parametrii referitori la cine va primi proforma.\n\n``` json\n{\n    \"sendEmail\": true,\n    \"email\": {\n        \"to\": \"test@firma.ro\",\n        \"cc\": \"test2@firma.ro\",\n        \"bcc\": \"test3@firma.ro\"\n    },\n}\n\n```\n\nAtunci cand parametrul **to** lipseste, proforma va fi trimisa adresei de email definita in parametrul **email** din sectiunea client.\n\nAtunci cand parametrul **to** este completat, email-ul din acest camp va primi proforma si"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Configurari",
+					"item": [
+						{
+							"name": "Interogare cote TVA",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/tax?cif={{vatCode}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"tax"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre cotele TVA definite in pagina [Cote TVA](https://cloud.smartbill.ro/core/configurare/cote-tva/) fara a fi necesara accesarea contului SmartBill Cloud.\n\nMetoda returneaza numele cotelor TVA definite si valoarea acestora."
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare serii documente",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/series?cif={{vatCode}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"series"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre seriile si numerele documentelor definite in pagina [Serii documente](https://cloud.smartbill.ro/core/configurare/serii/) fara a fi necesara accesarea contului SmartBill Cloud.\n\nMetoda returneaza seriile documentelor si numarul care urmeaza sa fie emis in fiecare serie."
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare serie facturi",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/series?cif={{vatCode}}&type=f",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"series"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "type",
+											"value": "f"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre seriile si numerele facturilor definite in pagina [Serii documente](https://cloud.smartbill.ro/core/configurare/serii/) fara a fi necesara accesarea contului SmartBill Cloud.\n\nMetoda returneaza seriile facturilor si numarul care urmeaza sa fie emis in fiecare serie."
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare serie proforme",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/series?cif={{vatCode}}&type=p",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"series"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "type",
+											"value": "p"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre seriile si numerele proformelor definite in pagina [Serii documente](https://cloud.smartbill.ro/core/configurare/serii/) fara a fi necesara accesarea contului SmartBill Cloud.\n\nMetoda returneaza seriile proformelor si numarul care urmeaza sa fie emis in fiecare serie."
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare serie chitante",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/series?cif={{vatCode}}&type=c",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"series"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "type",
+											"value": "c"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre seriile si numerele chitantelor definite in pagina [Serii documente](https://cloud.smartbill.ro/core/configurare/serii/) fara a fi necesara accesarea contului SmartBill Cloud.\n\nMetoda returneaza seriile chitantelor si numarul care urmeaza sa fie emis in fiecare serie."
+							},
+							"response": []
+						}
+					],
+					"description": "Contine toate interogarile posibile prin API-ul SmartBill referitoare la configurarile contului."
+				},
+				{
+					"name": "Stocuri",
+					"item": [
+						{
+							"name": "Interogarea stoc pentru un produs specific",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/stocks?cif={{vatCode}}&date={{todayDate}}&warehouseName={{warehouseName}}&productName={{productName}}&productCode={{productCode}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stocks"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "date",
+											"value": "{{todayDate}}"
+										},
+										{
+											"key": "warehouseName",
+											"value": "{{warehouseName}}"
+										},
+										{
+											"key": "productName",
+											"value": "{{productName}}"
+										},
+										{
+											"key": "productCode",
+											"value": "{{productCode}}"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre stocul unui produs specific.\n\nMetoda returneaza:\n\n*   informatii despre gestiune:\n    *   numele gestiunii\n    *   tipul gestiunii - \"en gros\" sau \"en detail\"\n*   informatii despre produs:\n    *   numele produsului\n    *   codul produsului (doar daca firma foloseste cod produs)\n    *   unitatea de masura a produsului\n    *   stocul produsului\n\nIn cazul in care este specificata gestiunea dar nu produsul, se vor returna toate produsele de pe gestiune.\n\nIn cazul in care este specificat produsul dar nu gestiunea, vor fi returnate toate gestiunile in care apare produsul impreuna cu informatiile produsului pe fiecare gestiune in parte.\n\nIn cazul in care nu este specificata nici gestiunea nici produsul, se vor prelua informatiile tuturor gestiunilor si toate produsele din acestea."
+							},
+							"response": []
+						},
+						{
+							"name": "Interogare stocuri  dintr-o anumita gestiune",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/stocks?cif={{vatCode}}&date={{todayDate}}&warehouseName={{warehouseName}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stocks"
+									],
+									"query": [
+										{
+											"key": "cif",
+											"value": "{{vatCode}}"
+										},
+										{
+											"key": "date",
+											"value": "{{todayDate}}"
+										},
+										{
+											"key": "warehouseName",
+											"value": "{{warehouseName}}"
+										}
+									]
+								},
+								"description": "Metoda este folosita pentru a afla informatii despre stocurile produselor dintr-o anumita gestiune.\n\nMetoda returneaza:\n\n*   informatii despre gestiune:\n    *   numele gestiunii\n    *   tipul gestiunii - \"en gros\" sau \"en detail\"\n*   informatii despre produse:\n    *   numele produselor\n    *   codul produselor (doar daca firma foloseste cod produs)\n    *   unitatea de masura a produselor\n    *   stocul produselor\n\nIn cazul in care nu este specificata gestiunea, se vor prelua informatiile tuturor gestiunilor si toate produsele din acestea."
+							},
+							"response": []
+						}
+					],
+					"description": "Contine toate interogarile posibile prin API-ul SmartBill referitoare la stocuri."
+				}
+			],
+			"description": "## Posibilitati prin SmartBill API:\n\n*   Emiterea de noi facturi, stergerea/anularea de documente deja existente sau restaurarea documentelor anulate;\n*   Acces la facturi si proforme in format PDF;\n*   Adaugarea de noi produse si clienti in baza de date, prin simpla inserare a unei facturi sau proforme;\n*   Emiterea si gestionarea de proforme, care pot fi convertite in facturi dupa efectuarea platii de catre client;\n*   Gestionarea eficienta a incasarilor prin emiterea de incasari pentru o factura;\n*   Trimiterea de documente prin e-mail clientilor;\n*   Acces la stocuri, serii si cote TVA"
+		}
+
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{token}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{email}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script to generate current date",
+					"",
+					"",
+					" const moment = require('moment'); ",
+					" const today = moment();",
+					" var todayDate = today.format('YYYY-MM-DD'); ",
+					" pm.globals.set(\"todayDate\", todayDate);",
+					"",
+					"",
+					" // Script that allows commenting JSON in payload",
+					" if (pm?.request?.body?.options?.raw?.language === 'json') {    const rawData = pm.request.body.toString();    const strippedData = rawData.replace(        /\\\\\"|\"(?:\\\\\"|[^\"])*\"|(\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)/g,        (m, g) => g ? \"\" : m    );    pm.request.body.update(JSON.stringify(JSON.parse(strippedData)));}pm.request.upsertHeader({key: 'Content-Type', value: 'application/json'});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://ws.smartbill.ro/SBORO/api",
+			"type": "string"
+		},
+		{
+			"key": "vatCode",
+			"value": "CIF-UL FIRMEI ",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "EMAIL ASOCIAT FIRMEI DIN SMARTBILL",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "TOKEN DIN CONTUL MEU > INTEGRARI",
+			"type": "string"
+		},
+		{
+			"key": "date",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "invoiceSeriesName",
+			"value": "SERIA FACTURII",
+			"type": "string"
+		},
+		{
+			"key": "estimateSeriesName",
+			"value": "SERIA PROFORMEI",
+			"type": "string"
+		},
+		{
+			"key": "paymentSeries",
+			"value": "SERIA CHITANTEI",
+			"type": "string"
+		},
+		{
+			"key": "warehouseName",
+			"value": "NUMELE GESTIUNII DIN SMARTBILL",
+			"type": "string"
+		},
+		{
+			"key": "productName",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productCode",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "clientName",
+			"value": "SC Company SA",
+			"type": "string"
+		},
+		{
+			"key": "clientEmail",
+			"value": "emailclient@domain.ro",
+			"type": "string"
+		},
+		{
+			"key": "clientVatCode",
+			"value": "RO12345678",
+			"type": "string"
+		},
+		{
+			"key": "clientRegCom",
+			"value": "J22/222/2022",
+			"type": "string"
+		},
+		{
+			"key": "clientAddress",
+			"value": "Str. Iasomiei nr 2",
+			"type": "string"
+		},
+		{
+			"key": "clientCity",
+			"value": "Cluj-Napoca",
+			"type": "string"
+		},
+		{
+			"key": "clientCounty",
+			"value": "Cluj-Napoca",
+			"type": "string"
+		},
+		{
+			"key": "clientCountry",
+			"value": "Romania",
+			"type": "string"
+		},
+		{
+			"key": "clientBank",
+			"value": "ING",
+			"type": "string"
+		},
+		{
+			"key": "clientIban",
+			"value": "RO27INGB0099000014188911",
+			"type": "string"
+		}
+	]
+}
