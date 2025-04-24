@@ -1,6 +1,6 @@
 {
   "name": "smartbill-ts-sdk",
-  "version": "1.1.2",
+  "version": "1.1.5",
   "author": "florin-szilagyi",
   "description": "SmartBill TypeScript SDK",
   "main": "dist/index.js",
@@ -27,7 +27,8 @@
   "scripts": {
     "build": "tsc",
     "pretest": "pnpm run build",
-    "test": "npx cross-env vitest"
+    "test": "npx cross-env vitest",
+    "prepublish": "pnpm run build"
   },
   "keywords": [
     "smartbill",

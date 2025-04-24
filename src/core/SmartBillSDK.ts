@@ -1,8 +1,8 @@
 import { InvoiceHandlerImpl } from "../handlers/InvoiceHandler";
 import { EstimateHandlerImpl } from "../handlers/EstimateHandler";
-import { PaymentHandler } from "../handlers/PaymentHandler";
-import { ConfigurationHandler } from "../handlers/ConfigurationHandler";
-import { StockHandler } from "../handlers/StockHandler";
+import { PaymentHandler, PaymentHandlerImpl } from "../handlers/PaymentHandler";
+import { ConfigurationHandler, ConfigurationHandlerImpl } from "../handlers/ConfigurationHandler";
+import { StockHandler, StockHandlerImpl } from "../handlers/StockHandler";
 import { RequestMethods } from "./http";
 
 export interface SmartBillSDKConfig {
@@ -30,6 +30,7 @@ export class SmartBillSDK {
       "Content-Type": "application/json"
     };
     const requestMethods: RequestMethods = {
+      getBuffer: this.getBuffer.bind(this),
       get: this.get.bind(this),
       post: this.post.bind(this),
       put: this.put.bind(this),
@@ -37,14 +38,14 @@ export class SmartBillSDK {
     };
     this.invoices = new InvoiceHandlerImpl(requestMethods);
     this.estimates = new EstimateHandlerImpl(requestMethods);
-    this.payments = new PaymentHandler(requestMethods);
-    this.configuration = new ConfigurationHandler(requestMethods);
-    this.stocks = new StockHandler(requestMethods);
+    this.payments = new PaymentHandlerImpl(requestMethods);
+    this.configuration = new ConfigurationHandlerImpl(requestMethods);
+    this.stocks = new StockHandlerImpl(requestMethods);
     this.verbose = config.verbose || false;
   }
 
-  // --- Private HTTP Methods ---
-  private async get<T>(path: string, query?: Record<string, any>): Promise<T | Buffer> {
+
+  private async getSomething(path: string, query?: Record<string, any>) : Promise<Response> {
     let url = `${this.baseUrl}${path}`;
     if (query && Object.keys(query).length > 0) {
       const params = new URLSearchParams();
@@ -74,9 +75,20 @@ export class SmartBillSDK {
       }
       throw new Error(`GET ${path} failed: ${resp.status} ${resp.statusText}. ${errorText}`);
     }
+
+    return resp;
+  }
+
+  private async getBuffer(path: string, query?: Record<string, any>) : Promise<Buffer> {
+    const resp = await this.getSomething(path, query);
     if (!resp.headers.get("content-type")?.includes("application/json")) {
       return Buffer.from(await resp.arrayBuffer());
     }
+    throw new Error("Unexpected non-JSON response received");
+  }
+  
+  private async get<T>(path: string, query?: Record<string, any>): Promise<T> {
+    const resp = await this.getSomething(path, query);
     return await resp.json();
   }
 

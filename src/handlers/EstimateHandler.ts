@@ -1,16 +1,26 @@
 import { z } from "zod";
 import { CreateEstimateParamsSchema, DefaultUrlSchema, SendEmailParamsSchema } from "../schemas";
-import { EstimateResponse } from "../types/estimateTypes";
 import { RequestMethods } from "../core/http";
 
 export interface EstimateHandler {
   create(data: z.infer<typeof CreateEstimateParamsSchema>): Promise<EstimateResponse>;
-  delete(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown>;
+  delete(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse>;
   getPdf(params: z.infer<typeof DefaultUrlSchema>): Promise<Buffer>;
-  getInvoicingStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown>;
-  cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown>;
-  restore(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown>;
-  sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<unknown>;
+  getInvoicingStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse>;
+  cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse>;
+  restore(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse>;
+  sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<EstimateResponse>;
+}
+
+export interface EstimateResponse {
+  series: string;
+  number: string;
+  errorText: string;
+  message: string;
+}
+
+export interface EstimateInvoiceResponse extends EstimateResponse {
+  areInvoicesCreated: boolean;
 }
 
 export class EstimateHandlerImpl implements EstimateHandler {
@@ -25,33 +35,33 @@ export class EstimateHandlerImpl implements EstimateHandler {
     return this.request.post<EstimateResponse>("/estimate", validated);
   }
 
-  async delete(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown> {
+  async delete(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse> {
     const validated = DefaultUrlSchema.parse(params);
-    return this.request.del<unknown>("/estimate", validated);
+    return this.request.del<EstimateResponse>("/estimate", validated);
   }
 
   async getPdf(params: z.infer<typeof DefaultUrlSchema>): Promise<Buffer> {
     const validated = DefaultUrlSchema.parse(params);
-    return this.request.get<Buffer>("/estimate/pdf", validated);
+    return this.request.getBuffer("/estimate/pdf", validated);
   }
 
-  async getInvoicingStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown> {
+  async getInvoicingStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateInvoiceResponse> {
     const validated = DefaultUrlSchema.parse(params);
-    return this.request.get<unknown>("/estimate/invoices", validated);
+    return this.request.get<EstimateInvoiceResponse>("/estimate/invoices", validated);
   }
 
-  async cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown> {
+  async cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse> {
     const validated = DefaultUrlSchema.parse(params);
-    return this.request.put<unknown>("/estimate/cancel", validated);
+    return this.request.put<EstimateResponse>("/estimate/cancel", validated);
   }
 
-  async restore(params: z.infer<typeof DefaultUrlSchema>): Promise<unknown> {
+  async restore(params: z.infer<typeof DefaultUrlSchema>): Promise<EstimateResponse> {
     const validated = DefaultUrlSchema.parse(params);
-    return this.request.put<unknown>("/estimate/restore", validated);
+    return this.request.put<EstimateResponse>("/estimate/restore", validated);
   }
 
-  async sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<unknown> {
+  async sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<EstimateResponse> {
     const validated = SendEmailParamsSchema.parse(data);
-    return this.request.post<unknown>("/estimate/send", validated);
+    return this.request.post<EstimateResponse>("/estimate/send", validated);
   }
 }
