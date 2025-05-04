@@ -1,16 +1,17 @@
 import { z } from "zod";
 import { CreateInvoiceParamsSchema, DefaultUrlSchema, DefaultSchema, SendEmailParamsSchema } from "../schemas";
 import { RequestMethods } from "../core/http";
+import { SmartbillResponse } from "../core/SmartBillSDK";
 
 export interface InvoiceHandler {
-  create(data: z.infer<typeof CreateInvoiceParamsSchema>): Promise<InvoiceResponse>;
-  delete(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoiceResponse>;
-  getPdf(params: z.infer<typeof DefaultUrlSchema>): Promise<Buffer>;
-  getPaymentStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoicePaymentStatusResponse>;
-  reverse(data: z.infer<typeof DefaultSchema>): Promise<InvoiceResponse>;
-  cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoiceResponse>;
-  restore(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoiceResponse>;
-  sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<InvoiceResponse>;
+  create(data: z.infer<typeof CreateInvoiceParamsSchema>): Promise<SmartbillResponse<InvoiceResponse>>;
+  delete(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoiceResponse>>;
+  getPdf(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<Buffer>>;
+  getPaymentStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoicePaymentStatusResponse>>;
+  reverse(data: z.infer<typeof DefaultSchema>): Promise<SmartbillResponse<InvoiceResponse>>;
+  cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoiceResponse>>;
+  restore(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoiceResponse>>;
+  sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<SmartbillResponse<InvoiceResponse>>;
 }
 
 export interface InvoiceResponse {
@@ -36,42 +37,42 @@ export class InvoiceHandlerImpl implements InvoiceHandler {
     this.request = requestMethods;
   }
 
-  async create(data: z.infer<typeof CreateInvoiceParamsSchema>): Promise<InvoiceResponse> {
+  async create(data: z.infer<typeof CreateInvoiceParamsSchema>): Promise<SmartbillResponse<InvoiceResponse>> {
     const validated = CreateInvoiceParamsSchema.parse(data);
     return this.request.post<InvoiceResponse>("/invoice", validated);
   }
 
-  async delete(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoiceResponse> {
+  async delete(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoiceResponse>> {
     const validated = DefaultUrlSchema.parse(params);
     return this.request.del<InvoiceResponse>("/invoice", validated);
   }
 
-  async getPdf(params: z.infer<typeof DefaultUrlSchema>): Promise<Buffer> {
+  async getPdf(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<Buffer>> {
     const validated = DefaultUrlSchema.parse(params);
     return this.request.getBuffer("/invoice/pdf", validated);
   }
 
-  async getPaymentStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoicePaymentStatusResponse> {
+  async getPaymentStatus(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoicePaymentStatusResponse>> {
     const validated = DefaultUrlSchema.parse(params);
     return this.request.get<InvoicePaymentStatusResponse>("/invoice/paymentstatus", validated);
   }
 
-  async reverse(data: z.infer<typeof DefaultSchema>): Promise<InvoiceResponse> {
+  async reverse(data: z.infer<typeof DefaultSchema>): Promise<SmartbillResponse<InvoiceResponse>> {
     const validated = DefaultSchema.parse(data);
     return this.request.post<InvoiceResponse>("/invoice/reverse", validated);
   }
 
-  async cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoiceResponse> {
+  async cancel(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoiceResponse>> {
     const validated = DefaultUrlSchema.parse(params);
     return this.request.put<InvoiceResponse>("/invoice/cancel", validated);
   }
 
-  async restore(params: z.infer<typeof DefaultUrlSchema>): Promise<InvoiceResponse> {
+  async restore(params: z.infer<typeof DefaultUrlSchema>): Promise<SmartbillResponse<InvoiceResponse>> {
     const validated = DefaultUrlSchema.parse(params);
     return this.request.put<InvoiceResponse>("/invoice/restore", validated);
   }
 
-  async sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<InvoiceResponse> {
+  async sendEmail(data: z.infer<typeof SendEmailParamsSchema>): Promise<SmartbillResponse<InvoiceResponse>> {
     const validated = SendEmailParamsSchema.parse(data);
     return this.request.post<InvoiceResponse>("/invoice/send", validated);
   }

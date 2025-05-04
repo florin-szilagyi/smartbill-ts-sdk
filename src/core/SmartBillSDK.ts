@@ -12,6 +12,17 @@ export interface SmartBillSDKConfig {
   verbose?: boolean; // Defaults to false
 }
 
+export interface SmartbillResponse<T> {
+  data?: T;
+  error?: SmartbillError;
+}
+
+export interface SmartbillError {
+  body: string;
+  statusText: string;
+  statusCode: number;
+}
+
 export class SmartBillSDK {
   private baseUrl: string;
   private headers: Record<string, string>;
@@ -45,7 +56,7 @@ export class SmartBillSDK {
   }
 
 
-  private async getSomething(path: string, query?: Record<string, any>) : Promise<Response> {
+  private async getSomething(path: string, query?: Record<string, any>) : Promise<SmartbillResponse<Response>> {
     let url = `${this.baseUrl}${path}`;
     if (query && Object.keys(query).length > 0) {
       const params = new URLSearchParams();
@@ -67,25 +78,27 @@ export class SmartBillSDK {
       console.log(`[Response] GET ${url}:`, resp.status, resp.statusText);
     }
 
-    await this.throwIfNotOk(resp);
+    if (!resp.ok) {
+      return { data: undefined, error: { body: await resp.text(), statusText: resp.statusText, statusCode: resp.status } };
+    }
 
-    return resp;
+    return { data: resp, error: undefined };
   }
 
-  private async getBuffer(path: string, query?: Record<string, any>) : Promise<Buffer> {
+  private async getBuffer(path: string, query?: Record<string, any>) : Promise<SmartbillResponse<Buffer>> {
     const resp = await this.getSomething(path, query);
-    if (!resp.headers.get("content-type")?.includes("application/json")) {
-      return Buffer.from(await resp.arrayBuffer());
+    if (!resp.data?.headers.get("content-type")?.includes("application/json")) {
+      return { data: Buffer.from(await resp.data?.arrayBuffer() as ArrayBuffer), error: undefined };
     }
     throw new Error("Unexpected non-JSON response received");
   }
   
-  private async get<T>(path: string, query?: Record<string, any>): Promise<T> {
+  private async get<T>(path: string, query?: Record<string, any>): Promise<SmartbillResponse<T>> {
     const resp = await this.getSomething(path, query);
-    return await resp.json();
+    return { data: await resp.data?.json(), error: resp.error };
   }
 
-  private async post<T>(path: string, body: object): Promise<T> {
+  private async post<T>(path: string, body: object): Promise<SmartbillResponse<T>> {
     const url = `${this.baseUrl}${path}`;
     if (this.verbose) {
       console.log(`[Request] POST ${url} ${JSON.stringify(body)}`);
@@ -98,12 +111,14 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] POST ${url}:`, resp.status, resp.statusText);
     }
-    await this.throwIfNotOk(resp);
+    if (!resp.ok) {
+      return { data: undefined, error: { body: await resp.text(), statusText: resp.statusText, statusCode: resp.status } };
+    }
 
-    return await resp.json();
+    return { data: await resp.json(), error: undefined };
   }
 
-  private async put<T>(path: string, paramsOrBody: Record<string, any> | object): Promise<T> {
+  private async put<T>(path: string, paramsOrBody: Record<string, any> | object): Promise<SmartbillResponse<T>> {
     let url = `${this.baseUrl}${path}`;
     let options: RequestInit = { method: "PUT", headers: this.headers };
     // Assume: if paramsOrBody has typical URL params, treat as query string
@@ -125,12 +140,13 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] PUT ${url}:`, resp.status, resp.statusText);
     }
-    await this.throwIfNotOk(resp);
-  
-    return await resp.json();
+    if (!resp.ok) {
+      return { data: undefined, error: { body: await resp.text(), statusText: resp.statusText, statusCode: resp.status } };
+    }
+    return { data: await resp.json(), error: undefined };
   }
 
-  private async del<T>(path: string, params: Record<string, any>): Promise<T> {
+  private async del<T>(path: string, params: Record<string, any>): Promise<SmartbillResponse<T>> {
     let url = `${this.baseUrl}${path}`;
     if (params && Object.keys(params).length > 0) {
       const queryParams = new URLSearchParams();
@@ -151,20 +167,9 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] DELETE ${url}:`, resp.status, resp.statusText);
     }
-    await this.throwIfNotOk(resp);
-    return await resp.json();
-  }
-
-  private async throwIfNotOk(resp: Response) {
     if (!resp.ok) {
-      let errorText = "";
-      try {
-        errorText = await resp.text();
-      } catch {
-        errorText = "(Failed to read response body)";
-      }
-
-      throw new Error(errorText);
+      return { data: undefined, error: { body: await resp.text(), statusText: resp.statusText, statusCode: resp.status } };
     }
+    return { data: await resp.json(), error: undefined };
   }
 }

@@ -5,7 +5,7 @@ import { ClientSchema, CreateInvoiceParamsSchema, ProductSchema } from '../src/s
 import dotenv from 'dotenv';
 import { z } from 'zod';
 import { describe, it, expect } from 'vitest';
-import { InvoiceResponse } from '../src/types/invoiceTypes';
+import { InvoiceResponse } from '../src/handlers/InvoiceHandler';
 
 dotenv.config();
 

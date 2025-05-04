@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { VatTaxRatesParamsSchema, SeriesParamsSchema, TaxResponse, SeriesResponse } from "../schemas";
 import { RequestMethods } from "../core/http";
+import { SmartbillResponse } from "../core/SmartBillSDK";
 
 export interface ConfigurationHandler {
-  getVatTaxRates(params: z.infer<typeof VatTaxRatesParamsSchema>): Promise<TaxResponse>;
-  getDocumentSeries(params: z.infer<typeof SeriesParamsSchema>): Promise<SeriesResponse>;
+  getVatTaxRates(params: z.infer<typeof VatTaxRatesParamsSchema>): Promise<SmartbillResponse<TaxResponse>>;
+  getDocumentSeries(params: z.infer<typeof SeriesParamsSchema>): Promise<SmartbillResponse<SeriesResponse>>;
 }
 
 export class ConfigurationHandlerImpl implements ConfigurationHandler {
@@ -14,7 +15,7 @@ export class ConfigurationHandlerImpl implements ConfigurationHandler {
     this.request = requestMethods;
   }
 
-  async getVatTaxRates(params: z.infer<typeof VatTaxRatesParamsSchema>): Promise<TaxResponse> {
+  async getVatTaxRates(params: z.infer<typeof VatTaxRatesParamsSchema>): Promise<SmartbillResponse<TaxResponse>> {
     const validated = VatTaxRatesParamsSchema.parse(params);
     const result = await this.request.get<TaxResponse>("/tax", validated);
     if (Buffer.isBuffer(result)) {
@@ -23,7 +24,7 @@ export class ConfigurationHandlerImpl implements ConfigurationHandler {
     return result;
   }
 
-  async getDocumentSeries(params: z.infer<typeof SeriesParamsSchema>): Promise<SeriesResponse> {
+  async getDocumentSeries(params: z.infer<typeof SeriesParamsSchema>): Promise<SmartbillResponse<SeriesResponse>> {
     const validated = SeriesParamsSchema.parse(params);
     const result = await this.request.get<SeriesResponse>("/series", validated);
     if (Buffer.isBuffer(result)) {
