@@ -66,15 +66,8 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] GET ${url}:`, resp.status, resp.statusText);
     }
-    if (!resp.ok) {
-      let errorText = "";
-      try {
-        errorText = await resp.text();
-      } catch (readError: any) {
-        errorText = `(Failed to read response body: ${readError.message})`;
-      }
-      throw new Error(`GET ${path} failed: ${resp.status} ${resp.statusText}. ${errorText}`);
-    }
+
+    await this.throwIfNotOk(resp);
 
     return resp;
   }
@@ -105,15 +98,8 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] POST ${url}:`, resp.status, resp.statusText);
     }
-    if (!resp.ok) {
-      let errorText = "";
-      try {
-        errorText = await resp.text();
-      } catch (readError: any) {
-        errorText = `(Failed to read response body: ${readError.message})`;
-      }
-      throw new Error(`POST ${path} failed: ${resp.status} ${resp.statusText}. ${errorText}`);
-    }
+    await this.throwIfNotOk(resp);
+
     return await resp.json();
   }
 
@@ -139,15 +125,8 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] PUT ${url}:`, resp.status, resp.statusText);
     }
-    if (!resp.ok) {
-      let errorText = "";
-      try {
-        errorText = await resp.text();
-      } catch (readError: any) {
-        errorText = `(Failed to read response body: ${readError.message})`;
-      }
-      throw new Error(`PUT ${path} failed: ${resp.status} ${resp.statusText}. ${errorText}`);
-    }
+    await this.throwIfNotOk(resp);
+  
     return await resp.json();
   }
 
@@ -172,15 +151,20 @@ export class SmartBillSDK {
     if (this.verbose) {
       console.log(`[Response] DELETE ${url}:`, resp.status, resp.statusText);
     }
+    await this.throwIfNotOk(resp);
+    return await resp.json();
+  }
+
+  private async throwIfNotOk(resp: Response) {
     if (!resp.ok) {
       let errorText = "";
       try {
         errorText = await resp.text();
-      } catch (readError: any) {
-        errorText = `(Failed to read response body: ${readError.message})`;
+      } catch {
+        errorText = "(Failed to read response body)";
       }
-      throw new Error(`DELETE ${path} failed: ${resp.status} ${resp.statusText}. ${errorText}`);
+
+      throw new Error(errorText);
     }
-    return await resp.json();
   }
 }
